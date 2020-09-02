@@ -75,8 +75,15 @@ class Regression:
 
     def betas(self,X,y):
         # Finding coefficients
-        beta = np.linalg.inv(X.T @ X) @ X.T @ f
+        beta = np.linalg.inv(X.T @ X) @ X.T @ y
         return beta
+
+    def linear_regression_homemade(self, ts):
+        # Splitting into train and test data
+        X_train, X_test, f_train, f_test = train_test_split(self.X, self.f, test_size=ts)
+        self.B = self.betas(X_train, f_train)
+        self.f_tilde = self.X @ self.B
+        return self.f_tilde
 
     def mean_squared_error(self, y, y_tilde):
         self.MSE = 1.0/self.n * np.sum(y - y_tilde)**2
@@ -92,6 +99,5 @@ class Regression:
 reg = Regression(100,2)
 reg.dataset2D()
 reg.design_matrix_homemade()
-f_pred = reg.linear_regression(ts = 0.2)
-
+f_pred = reg.linear_regression_homemade(0.2)
 ##

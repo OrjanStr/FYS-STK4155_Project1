@@ -12,6 +12,7 @@ class Regression:
     def __init__(self,n,deg):
         self.n = n
         self.deg = deg
+        self.p = 0.5 * (self.deg + 1) * (self.deg + 2)
 
     def FrankeFunction(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -63,10 +64,27 @@ class Regression:
         self.f_predict = linreg.predict(self.X)
         return self.f_predict
 
+    def design_matrix_homemade(self):
+        X = np.zeros((self.n,self.p))
+        for i in range(self.n):
+            for j in range(self.p):
+                X[i,j] = x**j * y**
+
     def betas(self,X,y):
         # Finding coefficients
         beta = np.linalg.inv(X.T @ X) @ X.T @ f
         return beta
+
+    def mean_squared_error(self, y, y_tilde):
+        self.MSE = 1.0/self.n * np.sum(y - y_tilde)**2
+        return self.MSE
+
+    def r_squared(self, y, y_tilde):
+        y_mean = 1.0/self.n * np.sum(y)
+        top = np.sum(y - y_tilde)**2
+        bottom = np.sum(y - y_mean)**2
+        self.R2 = 1 - top/bottom
+        return self.R2
 
 reg = Regression(100,2)
 reg.dataset2D()

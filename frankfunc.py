@@ -93,3 +93,5 @@ reg = Regression(100,2)
 reg.dataset2D()
 reg.design_matrix_homemade()
 f_pred = reg.linear_regression(ts = 0.2)
+
+##

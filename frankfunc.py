@@ -12,7 +12,7 @@ class Regression:
     def __init__(self,n,deg):
         self.n = n
         self.deg = deg
-        self.p = 0.5 * (self.deg + 1) * (self.deg + 2)
+        self.p = int(0.5 * (self.deg + 1) * (self.deg + 2))
 
     def FrankeFunction(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -65,10 +65,13 @@ class Regression:
         return self.f_predict
 
     def design_matrix_homemade(self):
-        X = np.zeros((self.n,self.p))
-        for i in range(self.n):
-            for j in range(self.p):
-                X[i,j] = x**j * y**
+        X = np.zeros((self.n, self.p))
+        idx = 0
+        for i in range(self.deg+1):
+            for j in range(self.deg+1-i):
+                X[:,idx] = self.x_[0,:]**i * self.y_[:,0]**j
+                idx += 1
+        self.X = X
 
     def betas(self,X,y):
         # Finding coefficients
@@ -88,5 +91,5 @@ class Regression:
 
 reg = Regression(100,2)
 reg.dataset2D()
-reg.design_matrix()
+reg.design_matrix_homemade()
 f_pred = reg.linear_regression(ts = 0.2)

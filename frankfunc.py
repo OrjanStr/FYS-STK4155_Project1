@@ -59,6 +59,7 @@ class Regression:
         # Splitting into train and test data
         X_train, X_test, f_train, f_test = train_test_split(self.X, self.f, test_size=ts)
         # Linear Regression
+        
         linreg = LinearRegression()
         linreg.fit(X_train, f_train)
         self.f_predict = linreg.predict(self.X)
@@ -75,7 +76,7 @@ class Regression:
 
     def betas(self,X,y):
         # Finding coefficients
-        beta = np.linalg.inv(X.T @ X) @ X.T @ f
+        beta = np.linalg.inv(X.T @ X) @ X.T @ y
         return beta
 
     def mean_squared_error(self, y, y_tilde):
@@ -88,6 +89,18 @@ class Regression:
         bottom = np.sum(y - y_mean)**2
         self.R2 = 1 - top/bottom
         return self.R2
+    
+    def bias_variance_plot(self):
+        x_ = np.linspace(0,1,self.n)
+        y_ = np.linspace(0,1,self.n)
+        
+        X = design_matrix_homemade
+        
+        
+        y = self.FrankeFunction(x_, y_)
+        y_pred = 
+        mean_squared_error()
+        
 
 reg = Regression(100,2)
 reg.dataset2D()

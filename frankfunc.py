@@ -129,7 +129,8 @@ class Regression:
         
 
 reg = Regression(100,2)
-reg.dataset2D()
+reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
+            #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 reg.design_matrix_homemade()
 f_pred = reg.linear_regression_homemade(0.2)
 reg.bias_variance_plot()

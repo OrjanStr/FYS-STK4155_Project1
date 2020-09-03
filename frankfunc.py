@@ -84,7 +84,7 @@ class Regression:
         # Splitting into train and test data
         X_train, X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
         self.B = self.betas(X_train, self.f_train)
-        self.f_tilde = self.X @ self.B
+        self.f_tilde = self.X @ self.B             # shouldnt this be X_train??
         return self.f_tilde
 
     def mean_squared_error(self, y, y_tilde):

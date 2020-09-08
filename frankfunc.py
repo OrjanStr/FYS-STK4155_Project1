@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
 
 class Regression:
     def __init__(self,n,deg):
@@ -67,6 +69,7 @@ class Regression:
         return self.f_predict
 
     def design_matrix_homemade(self):
+        
         X = np.zeros((self.n, self.p))
         idx = 0
         for i in range(self.deg+1):
@@ -80,11 +83,11 @@ class Regression:
         beta = np.linalg.inv(X.T @ X) @ X.T @ y
         return beta
 
-    def linear_regression_homemade(self, ts=0.25):
+    def linear_regression_homemade(self, ts=0.20):
         # Splitting into train and test data
-        X_train, X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
-        self.B = self.betas(X_train, self.f_train)
-        self.f_tilde = self.X @ self.B             # shouldnt this be X_train??
+        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
+        self.B = self.betas(self.X_train, self.f_train)
+        self.f_tilde = self.X @ self.B
         return self.f_tilde
 
     def mean_squared_error(self, y, y_tilde):
@@ -99,6 +102,39 @@ class Regression:
         return self.R2
     
     def bias_variance_plot(self):
+        
+        max_complexity = 30
+        trials = 100
+        k = 5 
+        complexity = np.linspace(1,max_complexity,max_complexity)
+        test_err = np.zeros(len(complexity))
+        train_err = np.zeros(len(complexity))
+        
+        
+        self.deg = max_complexity
+        
+        for deg in range(1,max_complexity):
+            
+            for samples in range (trials):
+                model = self.linear_regression_homemade()
+                y_train_pred = self.X_train @ self.B
+                y_test_pred = self.X_test @ self.B
+                test_err[deg] += mean_squared_error(self.f_test,y_test_pred) 
+                train_err[deg] += mean_squared_error(self.f_train,y_train_pred) 
+            
+            test_err[deg] /= trials
+            train_err[deg] /= trials
+        
+        
+        
+        plt.plot(complexity, np.log10(train_err), label='Training Error')
+        plt.plot(complexity, np.log10(test_err), label='Test Error')
+        plt.xlabel('Polynomial degree')
+        plt.ylabel('log10[MSE]')
+        plt.legend()
+        plt.show()
+        
+        """
         original_deg = self.deg
         compl = 100
         x_ = np.linspace(0,1,self.n)
@@ -111,12 +147,12 @@ class Regression:
         
         for i in range(compl):
             self.deg = i+1
-            #y_model = self.linear_regression_homemade()
+            y_model = self.linear_regression_homemade()
             #mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-            y_model = self.linear_regression()
-            mse_train[i] = mean_squared_error(y_model[:75],self.f_train)
-            mse_test[i] = mean_squared_error(y_model[:25],self.f_test)
+            #y_model = self.linear_regression()
+            mse_train[i] = mean_squared_error(self.f_train,y_model[:75])
+            mse_test[i] = mean_squared_error(self.f_test,y_model[:25])
         
         complexity = np.linspace(1,compl,compl)
         plt.plot(complexity , mse_train, label = 'train error')
@@ -126,9 +162,9 @@ class Regression:
         plt.legend()
         plt.show()
         self.deg = original_deg
-        
+        """
 
-reg = Regression(100,2)
+reg = Regression(200,2)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 reg.design_matrix_homemade()

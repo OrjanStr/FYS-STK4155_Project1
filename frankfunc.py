@@ -114,6 +114,10 @@ class Regression:
         self.R2 = 1 - top/bottom
         return self.R2
 
+    def beta_variance(self, B):
+        self.sigma_B = np.var(B)
+        return self.sigma_B
+
     def bias_variance_plot(self):
         max_complexity = 12
         trials = 100
@@ -152,6 +156,6 @@ reg.design_matrix_homemade(2)
 f_pred, f_tilde = reg.linear_regression_homemade(0.2)
 print("R2: ", reg.r_squared(reg.f_train, f_tilde))
 print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
-beta_variance = np.var(reg.B)
-print(o_b)
+sigma_B = reg.beta_variance(reg.B)
+print("Beta variance: ", sigma_B)
 reg.bias_variance_plot()

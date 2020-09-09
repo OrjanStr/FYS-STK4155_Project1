@@ -45,8 +45,8 @@ class Regression:
 
     def dataset2D(self):
         # Setting up dataset
-        self.x_ = np.linspace(0,1,self.n)
-        self.y_ = np.linspace(0,1,self.n)
+        self.x_ = np.random.randn(self.n)
+        self.y_ = np.random.randn(self.n)
 
         # Setting up the FrankeFunction with added noise
         noise = 0.1*np.random.randn(self.n)
@@ -104,6 +104,7 @@ class Regression:
         # Splitting into train and test data
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
         self.B = self.betas(self.X_train, self.f_train)
+        # Setting up model
         self.y_train_pred = self.X_train @ self.B
         self.y_test_pred = self.X_test @ self. B
         return self.y_test_pred ,self.y_train_pred
@@ -159,7 +160,10 @@ class Regression:
 reg = Regression(100)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-reg.design_matrix_homemade(2)
+reg.design_matrix_homemade(4)
 f_pred, f_tilde = reg.linear_regression_homemade(0.2)
-print(reg.r_squared(reg.f_test, f_pred))
-reg.bias_variance_plot()
+print("R2: ", reg.r_squared(reg.f_train, f_tilde))
+print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
+
+print(np.shape(reg.f))
+#reg.bias_variance_plot()

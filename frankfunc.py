@@ -11,6 +11,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
+
+np.random.seed(2)
 class Regression:
     def __init__(self,n):
         self.n = n
@@ -75,7 +77,7 @@ class Regression:
 
         self.y_train_pred = linreg.predict(self.X_train)
         self.y_test_pred = linreg.predict(self.X_test)
-
+        print (self.X_test)
         return self.f_predict
 
     def design_matrix_homemade(self, deg):
@@ -160,10 +162,10 @@ class Regression:
 reg = Regression(100)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-reg.design_matrix_homemade(4)
+reg.design_matrix_homemade(2)
 f_pred, f_tilde = reg.linear_regression_homemade(0.2)
 print("R2: ", reg.r_squared(reg.f_train, f_tilde))
 print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
-
+print ('xtest', reg.f_test)
 print(np.shape(reg.f))
-#reg.bias_variance_plot()
+reg.bias_variance_plot()

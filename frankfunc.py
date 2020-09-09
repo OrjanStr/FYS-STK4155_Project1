@@ -134,35 +134,6 @@ class Regression:
         plt.legend()
         plt.show()
         
-        """
-        original_deg = self.deg
-        compl = 100
-        x_ = np.linspace(0,1,self.n)
-        y_ = np.linspace(0,1,self.n)
-        mse_train = np.zeros(compl)
-        mse_test = np.zeros(compl)
-        
-        index1 = 0.75*self.n
-        index2 = 0.25*self.n
-        
-        for i in range(compl):
-            self.deg = i+1
-            y_model = self.linear_regression_homemade()
-            #mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
-            #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-            #y_model = self.linear_regression()
-            mse_train[i] = mean_squared_error(self.f_train,y_model[:75])
-            mse_test[i] = mean_squared_error(self.f_test,y_model[:25])
-        
-        complexity = np.linspace(1,compl,compl)
-        plt.plot(complexity , mse_train, label = 'train error')
-        plt.plot(complexity , mse_test,label = 'test error')
-        plt.xlabel('complexity')
-        plt.ylabel('Prediction Error')
-        plt.legend()
-        plt.show()
-        self.deg = original_deg
-        """
 
 reg = Regression(200,2)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)

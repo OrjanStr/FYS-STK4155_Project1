@@ -133,6 +133,7 @@ class Regression:
         plt.ylabel('log10[MSE]')
         plt.legend()
         plt.show()
+        
 
 reg = Regression(200,2)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)

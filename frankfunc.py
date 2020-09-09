@@ -11,8 +11,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
-
-np.random.seed(2)
 class Regression:
     def __init__(self,n):
         self.n = n
@@ -97,6 +95,10 @@ class Regression:
     def linear_regression_homemade(self, ts=0.20):
         # Splitting into train and test data
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
+        # Scaling Data
+        self.X_train = self.scale_data(self.X_train); self.X_test = self.scale_data(self.X_test)
+        self.f_train = self.scale_data(self.f_train); self.f_test = self.scale_data(self.f_test)
+        #Calculate betas
         self.B = self.betas(self.X_train, self.f_train)
         # Setting up model
         self.f_train_pred = self.X_train @ self.B
@@ -117,6 +119,9 @@ class Regression:
     def beta_variance(self, B):
         self.sigma_B = np.var(B)
         return self.sigma_B
+
+    def scale_data(self, data):
+        return data - np.mean(data)
 
     def bias_variance_plot(self):
         max_complexity = 12
@@ -149,7 +154,7 @@ class Regression:
         plt.show()
 
 
-reg = Regression(100)
+reg = Regression(400)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 reg.design_matrix_homemade(2)

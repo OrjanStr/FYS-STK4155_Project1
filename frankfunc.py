@@ -17,8 +17,6 @@ class Regression:
     def __init__(self,n):
         self.n = n
 
-
-
     def FrankeFunction(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
         term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
@@ -77,25 +75,19 @@ class Regression:
 
         self.y_train_pred = linreg.predict(self.X_train)
         self.y_test_pred = linreg.predict(self.X_test)
-        print (self.X_test)
         return self.f_predict
 
     def design_matrix_homemade(self, deg):
         # Setting up matrix
-
-
         self.p = int(0.5 * (deg + 1) * (deg + 2))
         X = np.zeros((self.n, self.p))
-
         # Filling in values
         idx = 0
         for i in range(deg+1):
             for j in range(deg+1-i):
                 X[:,idx] = self.x_**i * self.y_**j
                 idx += 1
-
         self.X = X
-
 
     def betas(self,X,z):
         # Finding coefficients
@@ -123,13 +115,11 @@ class Regression:
         return self.R2
 
     def bias_variance_plot(self):
-
         max_complexity = 12
         trials = 100
         complexity = np.linspace(1,max_complexity,max_complexity)
         test_err = np.zeros(len(complexity))
         train_err = np.zeros(len(complexity))
-
 
         for deg in range(1,max_complexity):
             test_err[deg] = 0
@@ -141,15 +131,11 @@ class Regression:
                 #self.design_matrix()
                 #self.linear_regression()
 
-
             test_err[deg] += mean_squared_error(self.f_test,self.y_test_pred)
             train_err[deg] += mean_squared_error(self.f_train,self.y_train_pred)
 
-
             test_err[deg] /= trials
             train_err[deg] /= trials
-
-
 
         plt.plot(complexity, np.log10(train_err), label='Training Error')
         plt.plot(complexity, np.log10(test_err), label='Test Error')
@@ -166,6 +152,6 @@ reg.design_matrix_homemade(2)
 f_pred, f_tilde = reg.linear_regression_homemade(0.2)
 print("R2: ", reg.r_squared(reg.f_train, f_tilde))
 print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
-print ('xtest', reg.f_test)
-print(np.shape(reg.f))
+beta_variance = np.var(reg.B)
+print(o_b)
 reg.bias_variance_plot()

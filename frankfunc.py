@@ -166,4 +166,4 @@ print("R2: ", reg.r_squared(reg.f_train, f_tilde))
 print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
 
 print(np.shape(reg.f))
-#reg.bias_variance_plot()
+reg.bias_variance_plot()

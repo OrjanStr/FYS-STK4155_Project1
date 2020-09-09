@@ -15,7 +15,7 @@ class Regression:
     def __init__(self,n,deg):
         self.n = n
         self.deg = deg
-        self.p = int(0.5 * (self.deg + 1) * (self.deg + 2))
+
 
     def FrankeFunction(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -68,9 +68,13 @@ class Regression:
         self.f_predict = linreg.predict(self.X)
         return self.f_predict
 
-    def design_matrix_homemade(self):
-
+    def design_matrix_homemade(self, deg):
+        # Setting up matrix
+        self.deg = deg
+        self.p = int(0.5 * (self.deg + 1) * (self.deg + 2))
         X = np.zeros((self.n, self.p))
+
+        # Filling in values
         idx = 0
         for i in range(self.deg+1):
             for j in range(self.deg+1-i):
@@ -133,7 +137,7 @@ class Regression:
         plt.ylabel('log10[MSE]')
         plt.legend()
         plt.show()
-        
+
 
 reg = Regression(200,2)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)

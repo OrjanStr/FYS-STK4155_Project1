@@ -106,8 +106,8 @@ class Regression:
 
     def r_squared(self, y, y_tilde):
         y_mean = 1.0/self.n * np.sum(y)
-        top = np.sum(y - y_tilde)**2
-        bottom = np.sum(y - y_mean)**2
+        top = np.sum( (y - y_tilde)**2 )
+        bottom = np.sum( (y - y_mean)**2 )
         self.R2 = 1 - top/bottom
         return self.R2
 

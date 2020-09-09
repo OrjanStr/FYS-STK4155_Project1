@@ -12,9 +12,9 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
 class Regression:
-    def __init__(self,n,deg):
+    def __init__(self,n):
         self.n = n
-        self.deg = deg
+
 
 
     def FrankeFunction(self,x,y):
@@ -45,16 +45,16 @@ class Regression:
 
     def dataset2D(self):
         # Setting up dataset
-        x_ = np.random.rand(self.n, 1)
-        y_ = np.random.rand(self.n, 1)
-        self.x_, self.y_ = np.meshgrid(x_, y_)
+        self.x_ = np.linspace(0,1,self.n)
+        self.y_ = np.linspace(0,1,self.n)
 
         # Setting up the FrankeFunction with added noise
-        noise = 0.1*np.random.randn(self.n, self.n)
+        noise = 0.1*np.random.randn(self.n)
+        
         self.f = self.FrankeFunction(self.x_, self.y_) + noise
 
         # Calculating variance of noise for later use
-        sigma_squared = 1.0/n * np.sum( noise**2 )
+        self.sigma_squared = 1.0/self.n * np.sum( noise**2 )
 
     def design_matrix(self):
         # Setting up design matrix
@@ -66,71 +66,83 @@ class Regression:
 
     def linear_regression(self, ts=0.25):
         # Splitting into train and test data
-        X_train, X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
+        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
         # Linear Regression
-
+        
         linreg = LinearRegression()
-        linreg.fit(X_train, self.f_train)
+        linreg.fit(self.X_train, self.f_train)
         self.f_predict = linreg.predict(self.X)
+        
+        self.y_train_pred = linreg.predict(self.X_train)
+        self.y_test_pred = linreg.predict(self.X_test)
+        
         return self.f_predict
 
     def design_matrix_homemade(self, deg):
         # Setting up matrix
-        self.deg = deg
-        self.p = int(0.5 * (self.deg + 1) * (self.deg + 2))
+
+        
+        self.p = int(0.5 * (deg + 1) * (deg + 2))
         X = np.zeros((self.n, self.p))
 
         # Filling in values
         idx = 0
-        for i in range(self.deg+1):
-            for j in range(self.deg+1-i):
-                X[:,idx] = self.x_[0,:]**i * self.y_[:,0]**j
+        for i in range(deg+1):
+            for j in range(deg+1-i):
+                X[:,idx] = self.x_**i * self.y_**j
                 idx += 1
+        
         self.X = X
-
-    def betas(self,X,y):
+    
+        
+    def betas(self,X,z):
         # Finding coefficients
-        beta = np.linalg.inv(X.T @ X) @ X.T @ y
+        beta = np.linalg.pinv(X.T @ X) @ X.T @ z
         return beta
 
     def linear_regression_homemade(self, ts=0.20):
         # Splitting into train and test data
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
         self.B = self.betas(self.X_train, self.f_train)
-        self.f_tilde = self.X @ self.B
-        return self.f_tilde
+        self.y_train_pred = self.X_train @ self.B
+        self.y_test_pred = self.X_test @ self. B
+        return self.y_test_pred ,self.y_train_pred
 
-    def mean_squared_error(self, y, y_tilde):
-        self.MSE = 1.0/self.n * np.sum(y - y_tilde)**2
+    def mean_squared_error_homemade(self, y, y_tilde):
+        self.MSE = 1.0/self.n * np.sum((y - y_tilde)**2)
         return self.MSE
 
     def r_squared(self, y, y_tilde):
         y_mean = 1.0/self.n * np.sum(y)
-        top = np.sum(y - y_tilde)**2
-        bottom = np.sum(y - y_mean)**2
+        top = np.sum( (y - y_tilde)**2 )
+        bottom = np.sum( (y - y_mean)**2 )
         self.R2 = 1 - top/bottom
         return self.R2
 
     def bias_variance_plot(self):
 
-        max_complexity = 30
+        max_complexity = 12
         trials = 100
-        k = 5
         complexity = np.linspace(1,max_complexity,max_complexity)
         test_err = np.zeros(len(complexity))
         train_err = np.zeros(len(complexity))
 
 
         for deg in range(1,max_complexity):
-
+            test_err[deg] = 0
+            train_err[deg] = 0
+            
             for samples in range (trials):
                 self.design_matrix_homemade(deg)
-                model = self.linear_regression_homemade()
-                y_train_pred = self.X_train @ self.B
-                y_test_pred = self.X_test @ self.B
-                test_err[deg] += mean_squared_error(self.f_test,y_test_pred)
-                train_err[deg] += mean_squared_error(self.f_train,y_train_pred)
-
+                self.linear_regression_homemade()
+                #self.design_matrix()
+                #self.linear_regression()
+                
+            
+            test_err[deg] += mean_squared_error(self.f_test,self.y_test_pred)
+            train_err[deg] += mean_squared_error(self.f_train,self.y_train_pred)
+            
+        
             test_err[deg] /= trials
             train_err[deg] /= trials
 
@@ -144,10 +156,10 @@ class Regression:
         plt.show()
 
 
-reg = Regression(200,2)
+reg = Regression(100)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 reg.design_matrix_homemade(2)
-f_pred = reg.linear_regression_homemade(0.2)
+f_pred, f_tilde = reg.linear_regression_homemade(0.2)
+print(reg.r_squared(reg.f_test, f_pred))
 reg.bias_variance_plot()
-##

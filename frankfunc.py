@@ -135,5 +135,4 @@ reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train
 reg.design_matrix_homemade()
 f_pred = reg.linear_regression_homemade(0.2)
 reg.bias_variance_plot()
->>>>>>> 7b7a2213dfd544a0600bea15d56aa7b122d42b85
 ##

@@ -99,9 +99,9 @@ class Regression:
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
         self.B = self.betas(self.X_train, self.f_train)
         # Setting up model
-        self.y_train_pred = self.X_train @ self.B
-        self.y_test_pred = self.X_test @ self. B
-        return self.y_test_pred ,self.y_train_pred
+        self.f_train_pred = self.X_train @ self.B
+        self.f_test_pred = self.X_test @ self. B
+        return self.f_test_pred ,self.f_train_pred
 
     def mean_squared_error_homemade(self, y, y_tilde):
         self.MSE = 1.0/self.n * np.sum((y - y_tilde)**2)
@@ -135,8 +135,8 @@ class Regression:
                 #self.design_matrix()
                 #self.linear_regression()
 
-            test_err[deg] += mean_squared_error(self.f_test,self.y_test_pred)
-            train_err[deg] += mean_squared_error(self.f_train,self.y_train_pred)
+            test_err[deg] += mean_squared_error(self.f_test,self.f_test_pred)
+            train_err[deg] += mean_squared_error(self.f_train,self.f_train_pred)
 
             test_err[deg] /= trials
             train_err[deg] /= trials

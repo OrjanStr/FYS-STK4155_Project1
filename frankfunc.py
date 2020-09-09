@@ -48,7 +48,13 @@ class Regression:
         x_ = np.random.rand(self.n, 1)
         y_ = np.random.rand(self.n, 1)
         self.x_, self.y_ = np.meshgrid(x_, y_)
-        self.f = self.FrankeFunction(self.x_, self.y_) + 0.1*np.random.randn(self.n, self.n)
+
+        # Setting up the FrankeFunction with added noise
+        noise = 0.1*np.random.randn(self.n, self.n)
+        self.f = self.FrankeFunction(self.x_, self.y_) + noise
+
+        # Calculating variance of noise for later use
+        sigma_squared = 1.0/n * np.sum( noise**2 )
 
     def design_matrix(self):
         # Setting up design matrix

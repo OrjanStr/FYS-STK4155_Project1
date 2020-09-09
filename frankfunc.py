@@ -115,11 +115,10 @@ class Regression:
         train_err = np.zeros(len(complexity))
 
 
-        self.deg = max_complexity
-
         for deg in range(1,max_complexity):
 
             for samples in range (trials):
+                self.design_matrix_homemade(deg)
                 model = self.linear_regression_homemade()
                 y_train_pred = self.X_train @ self.B
                 y_test_pred = self.X_test @ self.B
@@ -142,7 +141,7 @@ class Regression:
 reg = Regression(200,2)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-reg.design_matrix_homemade()
+reg.design_matrix_homemade(2)
 f_pred = reg.linear_regression_homemade(0.2)
 reg.bias_variance_plot()
 ##

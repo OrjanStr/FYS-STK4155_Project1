@@ -12,7 +12,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
 
-np.random.seed(2)
+
 class Regression:
     def __init__(self,n):
         self.n = n
@@ -45,13 +45,13 @@ class Regression:
 
     def dataset2D(self):
         # Setting up dataset
-        self.x_ = np.random.randn(self.n)
-        self.y_ = np.random.randn(self.n)
+        self.x = np.random.randn(self.n)
+        self.y = np.random.randn(self.n)
 
         # Setting up the FrankeFunction with added noise
         noise = 0.1*np.random.randn(self.n)
 
-        self.f = self.FrankeFunction(self.x_, self.y_) + noise
+        self.f = self.FrankeFunction(self.x, self.y) + noise
 
         # Calculating variance of noise for later use
         self.sigma_squared = 1.0/self.n * np.sum( noise**2 )
@@ -60,13 +60,14 @@ class Regression:
         # Setting up design matrix
         poly = PolynomialFeatures(self.deg)
         X = np.zeros((self.n,2))
-        X[:,0] = self.x_[0]
-        X[:,1] = self.y_[:,0]
+        X[:,0] = self.x[0]
+        X[:,1] = self.y[:,0]
         self.X = poly.fit_transform(X)
 
     def linear_regression(self, ts=0.25):
         # Splitting into train and test data
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
+        
         # Linear Regression
 
         linreg = LinearRegression()
@@ -85,7 +86,7 @@ class Regression:
         idx = 0
         for i in range(deg+1):
             for j in range(deg+1-i):
-                X[:,idx] = self.x_**i * self.y_**j
+                X[:,idx] = self.x**i * self.y**j
                 idx += 1
         self.X = X
 
@@ -118,6 +119,7 @@ class Regression:
         self.sigma_B = np.var(B)
         return self.sigma_B
 
+    
     def bias_variance_plot(self):
         max_complexity = 12
         trials = 100
@@ -132,8 +134,6 @@ class Regression:
             for samples in range (trials):
                 self.design_matrix_homemade(deg)
                 self.linear_regression_homemade()
-                #self.design_matrix()
-                #self.linear_regression()
 
             test_err[deg] += mean_squared_error(self.f_test,self.f_test_pred)
             train_err[deg] += mean_squared_error(self.f_train,self.f_train_pred)
@@ -149,7 +149,7 @@ class Regression:
         plt.show()
 
 
-reg = Regression(100)
+reg = Regression(400)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 reg.design_matrix_homemade(2)

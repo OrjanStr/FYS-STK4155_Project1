@@ -10,6 +10,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
+from sklearn.utils import resample
 
 class Regression:
     def __init__(self,n):
@@ -92,12 +93,16 @@ class Regression:
         beta = np.linalg.pinv(X.T @ X) @ X.T @ z
         return beta
 
-    def linear_regression_homemade(self, ts=0.20):
+    def split_data(self, X,f, ts=0.20 scale=True):
         # Splitting into train and test data
-        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
+        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X, f, test_size=ts)
         # Scaling Data
-        self.X_train = self.scale_data(self.X_train); self.X_test = self.scale_data(self.X_test)
-        self.f_train = self.scale_data(self.f_train); self.f_test = self.scale_data(self.f_test)
+        if scale:
+            self.X_train = self.scale_data(self.X_train); self.X_test = self.scale_data(self.X_test)
+            self.f_train = self.scale_data(self.f_train); self.f_test = self.scale_data(self.f_test)
+
+    def linear_regression_homemade(self, X, f):
+
         #Calculate betas
         self.B = self.betas(self.X_train, self.f_train)
         # Setting up model
@@ -123,6 +128,19 @@ class Regression:
     def scale_data(self, data):
         return data - np.mean(data)
 
+    def bootstrap(self, trials):
+        y_pred = np.zeros(( len(y), trials ))
+
+        for samples in range(trials):
+            x, y = resample(self.X_train, self.y_train)
+
+
+
+
+
+        test_err[deg] /= trials
+        train_err[deg] /= trials
+
     def bias_variance_plot(self):
         max_complexity = 12
         trials = 100
@@ -134,11 +152,9 @@ class Regression:
             test_err[deg] = 0
             train_err[deg] = 0
 
-            for samples in range (trials):
-                self.design_matrix_homemade(deg)
-                self.linear_regression_homemade()
-                #self.design_matrix()
-                #self.linear_regression()
+            self.design_matrix_homemade(deg)
+            self.linear_regression_homemade()
+
 
             test_err[deg] += mean_squared_error(self.f_test,self.f_test_pred)
             train_err[deg] += mean_squared_error(self.f_train,self.f_train_pred)

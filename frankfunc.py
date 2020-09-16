@@ -261,6 +261,11 @@ class Regression:
             z_pred[:,i] = self.linear_regression_homemade()[1]
         return z_pred
 
+    def bias(self, z, z_tilde):
+        return np.mean( (z - np.mean(z_tilde, axis = 1))**2 )
+
+    def variance(self, z_tilde):
+        return mp.mean( np.var(z_tilde) )
 
     def bias_variance(self):
         """

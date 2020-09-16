@@ -259,7 +259,7 @@ class Regression:
         for i in range(trials):
             self.X_train, self.f_train = resample(self.X_train, self.f_train)
             z_pred[:,i] = self.linear_regression_homemade()[1]
-        return np.mean(z_pred, axis=1)
+        return z_pred
 
 
     def bias_variance(self):
@@ -274,6 +274,8 @@ class Regression:
         complexity = np.linspace(1,max_complexity,max_complexity)
         test_err = np.zeros(len(complexity))
         train_err = np.zeros(len(complexity))
+        bias_arr = np.zeros(len(complexity))
+        variance_arr = np.zeros(len(complexity))
 
         for deg in range(1,max_complexity):
             test_err[deg] = 0
@@ -285,7 +287,17 @@ class Regression:
 
             test_err[deg] += mean_squared_error(self.f_test,f_test_pred)
             train_err[deg] += mean_squared_error(self.f_train,f_train_pred)
-
+            
+            z_pred = self.bootstrap(trials)
+            bias_arr[deg] = self.bias(f_test,z_pred)
+            variance_arr[deg] = self.variance(z_pred)
+            
+            
+            plt.plot(complexity, bias_arr, label = 'bias')
+            plt.plot(complexity, variance_arr , label = 'variance')
+            plt.legend()
+            plt.show()
+            
 
         plt.plot(complexity, np.log10(train_err), label='Training Error')
         plt.plot(complexity, np.log10(test_err), label='Test Error')

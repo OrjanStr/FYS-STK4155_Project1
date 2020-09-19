@@ -20,11 +20,6 @@ class Regression:
         ----------
         n : int
             DESCRIPTION.
-
-
-
-
-
         Examples
         --------
     """
@@ -56,7 +51,6 @@ class Regression:
 
     def plot_franke(self):
         """
-
         Returns
         -------
         None.
@@ -81,19 +75,18 @@ class Regression:
 
     def dataset2D(self):
         """
-
         Returns
         -------
         None.
         """
         # Setting up dataset
-        self.x = np.random.randn(self.n)
-        self.y = np.random.randn(self.n)
+        self.x = np.random.rand(self.n)
+        self.y = np.random.rand(self.n)
 
         # Setting up the FrankeFunction with added noise
         noise = 0.1*np.random.randn(self.n)
-
-        self.f = self._franke_function(self.x, self.y) + noise
+        frank = self._franke_function(self.x, self.y)
+        self.f =  frank + noise*np.mean(frank)
 
         # Calculating variance of noise for later use
         self.sigma_squared = 1.0/self.n * np.sum( noise**2 )
@@ -123,7 +116,6 @@ class Regression:
 
     def design_matrix_homemade(self, deg):
         """
-
         Parameters
         ----------
         deg : int
@@ -148,7 +140,6 @@ class Regression:
 
     def betas(self,X,z):
         """
-
         Parameters
         ----------
         X : TYPE
@@ -166,7 +157,6 @@ class Regression:
 
     def split_data(self,X,z,ts = 0.20):
         """
-
         Parameters
         ----------
         X : TYPE
@@ -179,12 +169,15 @@ class Regression:
         -------
         None.
         """
+
+        X[:,1:] -= np.mean(X[:,1:], axis = 0)
+        z -= np.mean(z)
+
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X, z, test_size=ts)
 
 
     def linear_regression_homemade(self):
         """
-
         Parameters
         ----------
         X : TYPE
@@ -204,7 +197,6 @@ class Regression:
 
     def mean_squared_error_homemade(self, y, y_tilde):
         """
-
         Parameters
         ----------
         y : TYPE
@@ -216,12 +208,11 @@ class Regression:
         TYPE
             DESCRIPTION.
         """
-        self.MSE = 1.0/self.n * np.sum((y - y_tilde)**2)
+        self.MSE = np.mean((y - y_tilde)**2)
         return self.MSE
 
     def r_squared(self, y, y_tilde):
         """
-
         Parameters
         ----------
         y : TYPE
@@ -241,7 +232,6 @@ class Regression:
 
     def beta_variance(self, B):
         """
-
         Parameters
         ----------
         B : TYPE
@@ -269,7 +259,6 @@ class Regression:
 
     def bias_variance(self):
         """
-
         Returns
         -------
         None.
@@ -281,15 +270,12 @@ class Regression:
         train_err = np.zeros(len(complexity))
 
         for deg in range(1,max_complexity):
-            test_err[deg] = 0
-            train_err[deg] = 0
-
             X = self.design_matrix_homemade(deg)
             self.split_data(X,self.f)
             f_test_pred, f_train_pred = self.linear_regression_homemade()
 
-            test_err[deg] += mean_squared_error(self.f_test,f_test_pred)
-            train_err[deg] += mean_squared_error(self.f_train,f_train_pred)
+            test_err[deg] = mean_squared_error(self.f_test,f_test_pred)
+            train_err[deg] = mean_squared_error(self.f_train,f_train_pred)
 
 
         plt.plot(complexity, np.log10(train_err), label='Training Error')
@@ -300,7 +286,7 @@ class Regression:
         plt.show()
 
 
-reg = Regression(400)
+reg = Regression(100)
 reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
             #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
 X = reg.design_matrix_homemade(2)
@@ -312,10 +298,14 @@ print("R2: ", reg.r_squared(reg.f_train, f_tilde))
 print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
 print("Beta variance: ", sigma_B)
 
-reg.bias_variance()
-
+#plt.scatter(reg.x,reg.f)
+#plt.scatter(reg.X_train[:,2], f_tilde, s=5)
+#plt.show()
+#reg.bias_variance()
+"""
 deg=2; boot=100
 X = reg.design_matrix_homemade(deg)
 reg.split_data(X,reg.f)
 f_pred, f_tilde = reg.linear_regression_homemade()
 f_pred_boot = reg.bootstrap(boot)
+"""

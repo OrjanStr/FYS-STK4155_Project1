@@ -102,14 +102,14 @@ reg.split(reg.X, reg.f)
 f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 print("MSE: ", reg.MSE(reg.f_test, f_pred))
 print("R2: ", reg.R2(reg.f_test, f_pred))
-print("95%% Confidence interval: ", reg.confidence_interval(95, 100))
+print("95% Confidence interval: ", reg.confidence_interval(95, 100))
 
 for i in range(maxdeg):
     deg = int(degrees[i])
     reg = Regression(n)
     reg.dataset2D()
     reg.design_matrix(deg)
-    reg.split(reg.X, reg.f, scale=False)
+    reg.split(reg.X, reg.f)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
     # Train and Test Error
@@ -117,7 +117,7 @@ for i in range(maxdeg):
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
     # Bootstrap Method for Bias and Variance
-    f_strap = reg.bootstrap(trials = 100)
+    f_strap = reg.bootstrap(trials = 1000)
     f_hat = np.mean(f_strap, axis=1, keepdims=True) # Finding the mean for every coloumn element
 
     bias[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )

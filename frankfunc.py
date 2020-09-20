@@ -68,12 +68,20 @@ class Regression():
         bottom = np.sum( (f - f_mean)**2 )
         return 1 - top/bottom
 
-    def bootstrap(self, X_test, X_train, f_train, trials):
+    def bootstrap(self, trials):
         z_pred = np.zeros((self.f_test.shape[0], trials))
         for i in range(trials):
-            X_train, f_train = resample(X_train, f_train)
-            z_pred[:,i] = self.OLS(X_train, X_test, f_train)[1]
+            X_new, f_new = resample(self.X_train, self.f_train)
+            z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
         return z_pred
+
+    def confidence_interval(self, perc, trials):
+        z_pred = self.bootstrap(trials) # Bootstrap sampling
+        means = np.mean(z_pred, axis=0) # Calculate the mean of each coloumn (each prediction)
+        lower = np.percentile(means, 100 - perc)
+        upper = np.percentile(means, perc)
+        return np.array([lower, upper])
+
 
 n = 1000; maxdeg = 10
 # Arrays for plotting error
@@ -94,13 +102,14 @@ reg.split(reg.X, reg.f)
 f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 print("MSE: ", reg.MSE(reg.f_test, f_pred))
 print("R2: ", reg.R2(reg.f_test, f_pred))
+print("95%% Confidence interval: ", reg.confidence_interval(95, 100))
 
 for i in range(maxdeg):
     deg = int(degrees[i])
     reg = Regression(n)
     reg.dataset2D()
     reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
+    reg.split(reg.X, reg.f, scale=False)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
     # Train and Test Error
@@ -108,7 +117,7 @@ for i in range(maxdeg):
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
     # Bootstrap Method for Bias and Variance
-    f_strap = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100)
+    f_strap = reg.bootstrap(trials = 100)
     f_hat = np.mean(f_strap, axis=1, keepdims=True) # Finding the mean for every coloumn element
 
     bias[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )

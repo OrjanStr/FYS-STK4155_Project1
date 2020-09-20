@@ -59,6 +59,15 @@ class Regression():
 
         return f_tilde, f_pred
 
+    def MSE(self, z1, z2):
+        return np.mean( (z1 - z2)**2 )
+
+    def R2(self, f, f_tilde):
+        f_mean = np.mean(f)
+        top = np.sum( (f - f_tilde)**2 )
+        bottom = np.sum( (f - f_mean)**2 )
+        return 1 - top/bottom
+
     def bootstrap(self, X_test, X_train, f_train, trials):
         z_pred = np.zeros((self.f_test.shape[0], trials))
         for i in range(trials):
@@ -66,7 +75,7 @@ class Regression():
             z_pred[:,i] = self.OLS(X_train, X_test, f_train)[1]
         return z_pred
 
-n = 50000; maxdeg = 10
+n = 1000; maxdeg = 10
 # Arrays for plotting error
 degrees = np.linspace(1,maxdeg,maxdeg)
 train_error = np.zeros(maxdeg)
@@ -80,11 +89,11 @@ variance2 = np.zeros(maxdeg)
 deg = 2
 reg = Regression(n)
 reg.dataset2D()
-print("max x: ", np.max(reg.f), "min x: ", np.min(reg.f))
 reg.design_matrix(deg)
 reg.split(reg.X, reg.f)
 f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
-print(np.mean( (reg.f_test - f_pred)**2 ))
+print("MSE: ", reg.MSE(reg.f_test, f_pred))
+print("R2: ", reg.R2(reg.f_test, f_pred))
 
 for i in range(maxdeg):
     deg = int(degrees[i])

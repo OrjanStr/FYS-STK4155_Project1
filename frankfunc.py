@@ -69,10 +69,10 @@ class Regression():
         return 1 - top/bottom
 
     def bootstrap(self, trials):
-        z_pred = np.zeros((self.f_test.shape[0], trials))
+        z_pred = np.zeros((self.f_train.shape[0], trials))
         for i in range(trials):
             X_new, f_new = resample(self.X_train, self.f_train)
-            z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
+            z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[0]
         return z_pred
 
     def confidence_interval(self, perc, trials):
@@ -83,7 +83,7 @@ class Regression():
         return np.array([lower, upper])
 
 
-n = 1000; maxdeg = 10
+n = 100; maxdeg = 10
 # Arrays for plotting error
 degrees = np.linspace(1,maxdeg,maxdeg)
 train_error = np.zeros(maxdeg)
@@ -94,7 +94,7 @@ variance = np.zeros(maxdeg)
 bias2 = np.zeros(maxdeg)
 variance2 = np.zeros(maxdeg)
 
-deg = 2
+deg = 7
 reg = Regression(n)
 reg.dataset2D()
 reg.design_matrix(deg)
@@ -104,12 +104,17 @@ print("MSE: ", reg.MSE(reg.f_test, f_pred))
 print("R2: ", reg.R2(reg.f_test, f_pred))
 print("95% Confidence interval: ", reg.confidence_interval(95, 100))
 
+plt.scatter(reg.X_test[:, deg+1], reg.f_test)
+plt.scatter(reg.X_test[:, deg+1], f_pred)
+plt.show()
+
+"""
 for i in range(maxdeg):
     deg = int(degrees[i])
     reg = Regression(n)
     reg.dataset2D()
     reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
+    reg.split(reg.X, reg.f, scale=False)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
     # Train and Test Error
@@ -135,3 +140,4 @@ plt.plot(degrees, bias, label='Bias')
 plt.plot(degrees, variance, label='Variance')
 plt.legend()
 plt.show()
+"""

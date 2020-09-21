@@ -15,9 +15,7 @@ from sklearn.utils import resample
 
 
 class Regression:
-
     def __init__(self,n):
-
         self.n = n
 
     def _franke_function(self,x,y):
@@ -70,11 +68,11 @@ class Regression:
         return f_test_pred ,f_train_pred
 
     def MSE(self, y, y_tilde):
-        self.MSE = 1.0/self.n * np.sum((y - y_tilde)**2)
-        return self.MSE
+        error = np.mean((y - y_tilde)**2)
+        return error
 
     def R2(self, y, y_tilde):
-        y_mean = 1.0/self.n * np.sum(y)
+        y_mean = np.mean(y)
         top = np.sum( (y - y_tilde)**2 )
         bottom = np.sum( (y - y_mean)**2 )
         self.R2 = 1 - top/bottom
@@ -97,44 +95,40 @@ class Regression:
     def variance(self, z_tilde):
         return mp.mean( np.var(z_tilde) )
 
-    def bias_variance(self):
-        max_complexity = 12
-        trials = 100
-        complexity = np.linspace(1,max_complexity,max_complexity)
-        test_err = np.zeros(len(complexity))
-        train_err = np.zeros(len(complexity))
+n=500; deg=2
 
-        for i in range(max_complexity):
-            test_err[i] = 0
-            train_err[i] = 0
-
-            X = self.design_matrix( int(complexity[i]) )
-            self.split_scale(X,self.f)
-            f_test_pred, f_train_pred = self.OLS(self.X_train, self.X_test, self.f_train)
-
-            test_err[i] += mean_squared_error(self.f_test,f_test_pred)
-            train_err[i] += mean_squared_error(self.f_train,f_train_pred)
-
-
-        plt.plot(complexity, np.log10(train_err), label='Training Error')
-        plt.plot(complexity, np.log10(test_err), label='Test Error')
-        plt.xlabel('Polynomial degree')
-        plt.ylabel('log10[MSE]')
-        plt.legend()
-        plt.show()
-
-
-reg = Regression(400)
-reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
-            #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-X = reg.design_matrix(2)
+reg = Regression(500)
+reg.dataset2D()
+X = reg.design_matrix(deg)
 reg.split_scale(X,reg.f)
-B = reg.betas(reg.X_train, reg.f_train)
-sigma_B = reg.beta_variance(B)
 f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+
 print("R2: ", reg.R2(reg.f_train, f_tilde))
 print("MSE: ", reg.MSE(reg.f_test, f_pred))
-print("Beta variance: ", sigma_B)
+
+max_complexity = 12
+trials = 100
+complexity = np.linspace(1,max_complexity,max_complexity)
+test_err = np.zeros(len(complexity))
+train_err = np.zeros(len(complexity))
+
+for i in range(max_complexity):
+    reg = Regression(n)
+    reg.dataset2D() # Set up data
+    X = reg.design_matrix( int(complexity[i]) ) # Create design matrix
+    reg.split_scale(X,reg.f) # Split and scale data
+    f_test_pred, f_train_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+
+    test_err[i] = reg.MSE(reg.f_test, f_test_pred)
+    train_err[i] = reg.MSE(reg.f_train,f_train_pred)
+
+
+plt.plot(complexity, np.log10(train_err), label='Training Error')
+plt.plot(complexity, np.log10(test_err), label='Test Error')
+plt.xlabel('Polynomial degree')
+plt.ylabel('log10[MSE]')
+plt.legend()
+plt.show()
 
 reg.bias_variance()
 

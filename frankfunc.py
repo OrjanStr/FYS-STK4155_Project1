@@ -62,11 +62,11 @@ class Regression:
     def split_scale(self,X,z,ts = 0.20):
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X, z, test_size=ts)
 
-    def OLS(self):
-        B = self.betas(self.X_train, self.f_train)
+    def OLS(self, X_train, X_test, f_train):
+        B = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ f_train
         # Setting up model
-        f_train_pred = self.X_train @ B
-        f_test_pred = self.X_test @ B
+        f_train_pred = X_train @ B
+        f_test_pred = X_test @ B
         return f_test_pred ,f_train_pred
 
     def MSE(self, y, y_tilde):
@@ -87,8 +87,8 @@ class Regression:
     def bootstrap(self,trials):
         z_pred = np.zeros((self.f_train.shape[0], trials))
         for i in range(trials):
-            self.X_train, self.f_train = resample(self.X_train, self.f_train)
-            z_pred[:,i] = self.OLS()[1]
+            X_new, f_new = resample(self.X_train, self.f_train)
+            z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
         return z_pred
 
     def bias(self, z, z_tilde):
@@ -110,7 +110,7 @@ class Regression:
 
             X = self.design_matrix( int(complexity[i]) )
             self.split_scale(X,self.f)
-            f_test_pred, f_train_pred = self.OLS()
+            f_test_pred, f_train_pred = self.OLS(self.X_train, self.X_test, self.f_train)
 
             test_err[i] += mean_squared_error(self.f_test,f_test_pred)
             train_err[i] += mean_squared_error(self.f_train,f_train_pred)
@@ -131,7 +131,7 @@ X = reg.design_matrix(2)
 reg.split_scale(X,reg.f)
 B = reg.betas(reg.X_train, reg.f_train)
 sigma_B = reg.beta_variance(B)
-f_pred, f_tilde = reg.OLS()
+f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 print("R2: ", reg.R2(reg.f_train, f_tilde))
 print("MSE: ", reg.MSE(reg.f_test, f_pred))
 print("Beta variance: ", sigma_B)
@@ -141,5 +141,5 @@ reg.bias_variance()
 deg=2; boot=100
 X = reg.design_matrix(deg)
 reg.split_scale(X,reg.f)
-f_pred, f_tilde = reg.OLS()
+f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 f_pred_boot = reg.bootstrap(boot)

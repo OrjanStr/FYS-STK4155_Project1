@@ -15,38 +15,10 @@ from sklearn.utils import resample
 
 
 class Regression:
-    """
-        Parameters
-        ----------
-        n : int
-            DESCRIPTION.
-
-
-
-
-
-        Examples
-        --------
-    """
-
     def __init__(self,n):
-
         self.n = n
 
     def _franke_function(self,x,y):
-        """
-        Parameters
-        ----------
-        x : array
-            DESCRIPTION.
-        y : array
-            DESCRIPTION.
-        Returns
-        -------
-        array
-            DESCRIPTION.
-        """
-
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
         term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
         term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
@@ -54,38 +26,7 @@ class Regression:
 
         return term1 + term2 + term3 + term4
 
-    def plot_franke(self):
-        """
-
-        Returns
-        -------
-        None.
-        """
-        # Make data.
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        x = np.arange(0, 1, 0.05)
-        y = np.arange(0, 1, 0.05)
-        x, y = np.meshgrid(x,y)
-        z = self._franke_function(x, y)
-
-        # Plot the surface.
-        surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
-        linewidth=0, antialiased=False)
-        # Customize the z axis.
-        ax.set_zlim(-0.10, 1.40)
-        ax.zaxis.set_major_locator(LinearLocator(10))
-        ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-        # Add a color bar which maps values to colors.
-        fig.colorbar(surf, shrink=0.5, aspect=5)
-
     def dataset2D(self):
-        """
-
-        Returns
-        -------
-        None.
-        """
         # Setting up dataset
         self.x = np.random.randn(self.n)
         self.y = np.random.randn(self.n)
@@ -98,41 +39,7 @@ class Regression:
         # Calculating variance of noise for later use
         self.sigma_squared = 1.0/self.n * np.sum( noise**2 )
 
-    def design_matrix(self):
-        # Setting up design matrix
-        poly = PolynomialFeatures(self.deg)
-        X = np.zeros((self.n,2))
-        X[:,0] = self.x[0]
-        X[:,1] = self.y[:,0]
-        self.X = poly.fit_transform(X)
-
-    def linear_regression(self, ts=0.25):
-
-        # Splitting into train and test data
-        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(self.X, self.f, test_size=ts)
-
-        # Linear Regression
-
-        linreg = LinearRegression()
-        linreg.fit(self.X_train, self.f_train)
-        self.f_predict = linreg.predict(self.X)
-
-        self.y_train_pred = linreg.predict(self.X_train)
-        self.y_test_pred = linreg.predict(self.X_test)
-        return self.f_predict
-
-    def design_matrix_homemade(self, deg):
-        """
-
-        Parameters
-        ----------
-        deg : int
-            DESCRIPTION.
-        Returns
-        -------
-        X numpy.ndarray
-            DESCRIPTION.
-        """
+    def design_matrix(self, deg):
         # Setting up matrix
         self.p = int(0.5 * (deg + 1) * (deg + 2))
         X = np.zeros((self.n, self.p))
@@ -142,129 +49,64 @@ class Regression:
             for j in range(deg+1-i):
                 X[:,idx] = self.x**i * self.y**j
                 idx += 1
-
-
+        self.X = X
         return X
 
     def betas(self,X,z):
-        """
-
-        Parameters
-        ----------
-        X : TYPE
-            DESCRIPTION.
-        z : TYPE
-            DESCRIPTION.
-        Returns
-        -------
-        beta : TYPE
-            DESCRIPTION.
-        """
         # Finding coefficients
         beta = np.linalg.pinv(X.T @ X) @ X.T @ z
         return beta
 
-    def split_data(self,X,z,ts = 0.20):
-        """
-
-        Parameters
-        ----------
-        X : TYPE
-            DESCRIPTION.
-        z : TYPE
-            DESCRIPTION.
-        ts : float, optional
-            DESCRIPTION. The default is 0.20.
-        Returns
-        -------
-        None.
-        """
+    def split_scale(self,X,z,ts = 0.20, scale=True):
+        if scale:
+            X[:,1:] -= np.mean(X[:,1:], axis=0)
+            z -= np.mean(z)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X, z, test_size=ts)
 
-
-    def linear_regression_homemade(self):
-        """
-
-        Parameters
-        ----------
-        X : TYPE
-            DESCRIPTION.
-        Returns
-        -------
-        f_test_pred : TYPE
-            DESCRIPTION.
-        f_train_pred : TYPE
-            DESCRIPTION.
-        """
-        B = self.betas(self.X_train, self.f_train)
+    def OLS(self, X_train, X_test, f_train):
+        B = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ f_train
         # Setting up model
-        f_train_pred = self.X_train @ B
-        f_test_pred = self.X_test @ B
+        f_train_pred = X_train @ B
+        f_test_pred = X_test @ B
         return f_test_pred ,f_train_pred
 
-    def mean_squared_error_homemade(self, y, y_tilde):
-        """
+    def MSE(self, y, y_tilde):
+        error = np.mean((y - y_tilde)**2)
+        return error
 
-        Parameters
-        ----------
-        y : TYPE
-            DESCRIPTION.
-        y_tilde : TYPE
-            DESCRIPTION.
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-        """
-        self.MSE = 1.0/self.n * np.sum((y - y_tilde)**2)
-        return self.MSE
-
-    def r_squared(self, y, y_tilde):
-        """
-
-        Parameters
-        ----------
-        y : TYPE
-            DESCRIPTION.
-        y_tilde : TYPE
-            DESCRIPTION.
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-        """
-        y_mean = 1.0/self.n * np.sum(y)
+    def R2(self, y, y_tilde):
+        y_mean = np.mean(y)
         top = np.sum( (y - y_tilde)**2 )
         bottom = np.sum( (y - y_mean)**2 )
         self.R2 = 1 - top/bottom
         return self.R2
 
-    def beta_variance(self, B):
-        """
-
-        Parameters
-        ----------
-        B : TYPE
-            DESCRIPTION.
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-        """
-        self.sigma_B = np.var(B)
+    def beta_variance(self):
+        o2 = self.sigma_squared
+        X_ = self.X_train
+        self.sigma_B = o2 * np.linalg.pinv( X_.T @ X_ )
+        print("beta shape: ", self.sigma_B.shape)
         return self.sigma_B
 
     def bootstrap(self,trials):
         z_pred = np.zeros((self.f_train.shape[0], trials))
         for i in range(trials):
-            self.X_train, self.f_train = resample(self.X_train, self.f_train)
-            z_pred[:,i] = self.linear_regression_homemade()[1]
+            X_new, f_new = resample(self.X_train, self.f_train)
+            z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
         return z_pred
 
+    def confidence_interval(self, perc, trials):
+        z_pred = self.bootstrap(trials) # Bootstrap sampling
+        means = np.mean(z_pred, axis=0) # Calculate the mean of each coloumn (each prediction)
+        lower = np.percentile(means, 100 - perc)
+        upper = np.percentile(means, perc)
+        return np.array([lower, upper])
+
     def bias(self, z, z_tilde):
-        return np.mean( (z - np.mean(z_tilde, axis = 1))**2 )
+        return np.mean( (z - np.mean(z_tilde))**2 )
 
     def variance(self, z_tilde):
+<<<<<<< HEAD
         return mp.mean( np.var(z_tilde) )
 
     def bias_variance(self):
@@ -331,3 +173,61 @@ X = reg.design_matrix_homemade(deg)
 reg.split_data(X,reg.f)
 f_pred, f_tilde = reg.linear_regression_homemade()
 f_pred_boot = reg.bootstrap(boot)
+=======
+        return np.var(z_tilde)
+
+if __name__ == "__main__":
+    n=1000; deg=2
+
+    reg = Regression(500)
+    reg.dataset2D()
+    X = reg.design_matrix(deg)
+    reg.split_scale(X,reg.f)
+    f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+    B_var = reg.beta_variance()
+
+    print("R2: ", reg.R2(reg.f_train, f_tilde))
+    print("MSE: ", reg.MSE(reg.f_test, f_pred))
+    print("95% Confidence Interval: ", reg.confidence_interval(95,100))
+
+    max_complexity = 10
+    trials = 100
+    boots = 1000
+    complexity = np.linspace(1,max_complexity,max_complexity)
+
+    test_err = np.zeros(len(complexity))
+    train_err = np.zeros(len(complexity))
+
+    bias = np.zeros(len(complexity))
+    variance = np.zeros(len(complexity))
+
+    for i in range(max_complexity):
+        reg = Regression(n)
+        reg.dataset2D() # Set up data
+        X = reg.design_matrix( int(complexity[i]) ) # Create design matrix
+        reg.split_scale(X,reg.f) # Split and scale data
+        f_test_pred, f_train_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+
+        test_err[i] = reg.MSE(reg.f_test, f_test_pred)
+        train_err[i] = reg.MSE(reg.f_train,f_train_pred)
+
+        z_pred = reg.bootstrap(boots) # Running bootstrap resampling
+        f_hat = np.mean(z_pred, axis=1) # Finding optimal parameter by taking mean of samples
+        bias[i] = reg.bias(reg.f_test, f_hat)
+        variance[i] = np.mean(np.var(z_pred, axis=0))
+
+    plt.plot(complexity, train_err, label='Training Error')
+    plt.plot(complexity, test_err, label='Test Error')
+    plt.xlabel('Complexity')
+    plt.ylabel('MSE')
+    plt.legend()
+    plt.title("Training vs Test Error (MSE): n = %i"%n)
+    plt.show()
+
+    plt.plot(complexity, bias, label='Bias')
+    plt.plot(complexity, variance, label='Variance')
+    plt.xlabel('Complexity')
+    plt.legend()
+    plt.title("Bias-Variance Tradeoff: n=%i, bootstraps=%i"%(n,boots))
+    plt.show()
+>>>>>>> ea3155c867a79f78c155381a699a6604724d52c9

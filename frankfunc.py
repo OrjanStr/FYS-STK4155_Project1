@@ -109,6 +109,7 @@ if __name__ == "__main__":
 
     max_complexity = 10
     trials = 100
+    boots = 1000
     complexity = np.linspace(1,max_complexity,max_complexity)
 
     test_err = np.zeros(len(complexity))
@@ -127,10 +128,10 @@ if __name__ == "__main__":
         test_err[i] = reg.MSE(reg.f_test, f_test_pred)
         train_err[i] = reg.MSE(reg.f_train,f_train_pred)
 
-        z_pred = reg.bootstrap(100) # Running bootstrap resampling
+        z_pred = reg.bootstrap(boots) # Running bootstrap resampling
         f_hat = np.mean(z_pred, axis=1) # Finding optimal parameter by taking mean of samples
         bias[i] = reg.bias(reg.f_test, f_hat)
-        variance[i] = reg.variance(f_hat)
+        variance[i] = np.mean(np.var(z_pred, axis=0))
 
     plt.plot(complexity, train_err, label='Training Error')
     plt.plot(complexity, test_err, label='Test Error')
@@ -144,5 +145,5 @@ if __name__ == "__main__":
     plt.plot(complexity, variance, label='Variance')
     plt.xlabel('Complexity')
     plt.legend()
-    plt.title("Bias-Variance Tradeoff: n=%i, bootstraps=%i"%(n,100))
+    plt.title("Bias-Variance Tradeoff: n=%i, bootstraps=%i"%(n,boots))
     plt.show()

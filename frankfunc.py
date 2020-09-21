@@ -57,7 +57,10 @@ class Regression:
         beta = np.linalg.pinv(X.T @ X) @ X.T @ z
         return beta
 
-    def split_scale(self,X,z,ts = 0.20):
+    def split_scale(self,X,z,ts = 0.20, scale=True):
+        if scale:
+            X[:,1:] -= np.mean(X[:,1:], axis=0)
+            z -= np.mean(z)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X, z, test_size=ts)
 
     def OLS(self, X_train, X_test, f_train):
@@ -78,8 +81,11 @@ class Regression:
         self.R2 = 1 - top/bottom
         return self.R2
 
-    def beta_variance(self, B):
-        self.sigma_B = np.var(B)
+    def beta_variance(self):
+        o2 = self.sigma_squared
+        X_ = self.X_train
+        self.sigma_B = o2 * np.linalg.pinv( X_.T @ X_ )
+        print("beta shape: ", self.sigma_B.shape)
         return self.sigma_B
 
     def bootstrap(self,trials):
@@ -88,6 +94,13 @@ class Regression:
             X_new, f_new = resample(self.X_train, self.f_train)
             z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
         return z_pred
+
+    def confidence_interval(self, perc, trials):
+        z_pred = self.bootstrap(trials) # Bootstrap sampling
+        means = np.mean(z_pred, axis=0) # Calculate the mean of each coloumn (each prediction)
+        lower = np.percentile(means, 100 - perc)
+        upper = np.percentile(means, perc)
+        return np.array([lower, upper])
 
     def bias(self, z, z_tilde):
         return np.mean( (z - np.mean(z_tilde))**2 )
@@ -103,9 +116,11 @@ if __name__ == "__main__":
     X = reg.design_matrix(deg)
     reg.split_scale(X,reg.f)
     f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+    B_var = reg.beta_variance()
 
     print("R2: ", reg.R2(reg.f_train, f_tilde))
     print("MSE: ", reg.MSE(reg.f_test, f_pred))
+    print("95% Confidence Interval: ", reg.confidence_interval(95,100))
 
     max_complexity = 10
     trials = 100

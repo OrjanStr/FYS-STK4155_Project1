@@ -90,50 +90,59 @@ class Regression:
         return z_pred
 
     def bias(self, z, z_tilde):
-        return np.mean( (z - np.mean(z_tilde, axis = 1))**2 )
+        return np.mean( (z - np.mean(z_tilde))**2 )
 
     def variance(self, z_tilde):
-        return mp.mean( np.var(z_tilde) )
+        return np.var(z_tilde)
 
-n=500; deg=2
+if __name__ == "__main__":
+    n=1000; deg=2
 
-reg = Regression(500)
-reg.dataset2D()
-X = reg.design_matrix(deg)
-reg.split_scale(X,reg.f)
-f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+    reg = Regression(500)
+    reg.dataset2D()
+    X = reg.design_matrix(deg)
+    reg.split_scale(X,reg.f)
+    f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
-print("R2: ", reg.R2(reg.f_train, f_tilde))
-print("MSE: ", reg.MSE(reg.f_test, f_pred))
+    print("R2: ", reg.R2(reg.f_train, f_tilde))
+    print("MSE: ", reg.MSE(reg.f_test, f_pred))
 
-max_complexity = 12
-trials = 100
-complexity = np.linspace(1,max_complexity,max_complexity)
-test_err = np.zeros(len(complexity))
-train_err = np.zeros(len(complexity))
+    max_complexity = 10
+    trials = 100
+    complexity = np.linspace(1,max_complexity,max_complexity)
 
-for i in range(max_complexity):
-    reg = Regression(n)
-    reg.dataset2D() # Set up data
-    X = reg.design_matrix( int(complexity[i]) ) # Create design matrix
-    reg.split_scale(X,reg.f) # Split and scale data
-    f_test_pred, f_train_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+    test_err = np.zeros(len(complexity))
+    train_err = np.zeros(len(complexity))
 
-    test_err[i] = reg.MSE(reg.f_test, f_test_pred)
-    train_err[i] = reg.MSE(reg.f_train,f_train_pred)
+    bias = np.zeros(len(complexity))
+    variance = np.zeros(len(complexity))
 
+    for i in range(max_complexity):
+        reg = Regression(n)
+        reg.dataset2D() # Set up data
+        X = reg.design_matrix( int(complexity[i]) ) # Create design matrix
+        reg.split_scale(X,reg.f) # Split and scale data
+        f_test_pred, f_train_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
-plt.plot(complexity, np.log10(train_err), label='Training Error')
-plt.plot(complexity, np.log10(test_err), label='Test Error')
-plt.xlabel('Polynomial degree')
-plt.ylabel('log10[MSE]')
-plt.legend()
-plt.show()
+        test_err[i] = reg.MSE(reg.f_test, f_test_pred)
+        train_err[i] = reg.MSE(reg.f_train,f_train_pred)
 
-reg.bias_variance()
+        z_pred = reg.bootstrap(100) # Running bootstrap resampling
+        f_hat = np.mean(z_pred, axis=1) # Finding optimal parameter by taking mean of samples
+        bias[i] = reg.bias(reg.f_test, f_hat)
+        variance[i] = reg.variance(f_hat)
 
-deg=2; boot=100
-X = reg.design_matrix(deg)
-reg.split_scale(X,reg.f)
-f_pred, f_tilde = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
-f_pred_boot = reg.bootstrap(boot)
+    plt.plot(complexity, train_err, label='Training Error')
+    plt.plot(complexity, test_err, label='Test Error')
+    plt.xlabel('Complexity')
+    plt.ylabel('MSE')
+    plt.legend()
+    plt.title("Training vs Test Error (MSE): n = %i"%n)
+    plt.show()
+
+    plt.plot(complexity, bias, label='Bias')
+    plt.plot(complexity, variance, label='Variance')
+    plt.xlabel('Complexity')
+    plt.legend()
+    plt.title("Bias-Variance Tradeoff: n=%i, bootstraps=%i"%(n,100))
+    plt.show()

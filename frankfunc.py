@@ -106,74 +106,6 @@ class Regression:
         return np.mean( (z - np.mean(z_tilde))**2 )
 
     def variance(self, z_tilde):
-<<<<<<< HEAD
-        return mp.mean( np.var(z_tilde) )
-
-    def bias_variance(self):
-        """
-
-        Returns
-        -------
-        None.
-        """
-        max_complexity = 12
-        trials = 100
-        complexity = np.linspace(1,max_complexity,max_complexity)
-        test_err = np.zeros(len(complexity))
-        train_err = np.zeros(len(complexity))
-        bias_arr = np.zeros(len(complexity))
-        variance_arr = np.zeros(len(complexity))
-
-        for deg in range(1,max_complexity):
-            test_err[deg] = 0
-            train_err[deg] = 0
-
-            X = self.design_matrix_homemade(deg)
-            self.split_data(X,self.f)
-            f_test_pred, f_train_pred = self.linear_regression_homemade()
-
-            test_err[deg] += mean_squared_error(self.f_test,f_test_pred)
-            train_err[deg] += mean_squared_error(self.f_train,f_train_pred)
-            
-            z_pred = self.bootstrap(trials)
-            bias_arr[deg] = self.bias(f_test,z_pred)
-            variance_arr[deg] = self.variance(z_pred)
-            
-            
-            plt.plot(complexity, bias_arr, label = 'bias')
-            plt.plot(complexity, variance_arr , label = 'variance')
-            plt.legend()
-            plt.show()
-            
-
-        plt.plot(complexity, np.log10(train_err), label='Training Error')
-        plt.plot(complexity, np.log10(test_err), label='Test Error')
-        plt.xlabel('Polynomial degree')
-        plt.ylabel('log10[MSE]')
-        plt.legend()
-        plt.show()
-
-
-reg = Regression(400)
-reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
-            #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-X = reg.design_matrix_homemade(2)
-reg.split_data(X,reg.f)
-B = reg.betas(reg.X_train, reg.f_train)
-sigma_B = reg.beta_variance(B)
-f_pred, f_tilde = reg.linear_regression_homemade()
-print("R2: ", reg.r_squared(reg.f_train, f_tilde))
-print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
-print("Beta variance: ", sigma_B)
-
-reg.bias_variance()
-
-deg=2; boot=100
-X = reg.design_matrix_homemade(deg)
-reg.split_data(X,reg.f)
-f_pred, f_tilde = reg.linear_regression_homemade()
-f_pred_boot = reg.bootstrap(boot)
-=======
         return np.var(z_tilde)
 
 if __name__ == "__main__":
@@ -230,4 +162,3 @@ if __name__ == "__main__":
     plt.legend()
     plt.title("Bias-Variance Tradeoff: n=%i, bootstraps=%i"%(n,boots))
     plt.show()
->>>>>>> ea3155c867a79f78c155381a699a6604724d52c9

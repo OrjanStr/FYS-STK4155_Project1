@@ -70,6 +70,14 @@ class Regression:
         f_test_pred = X_test @ B
         return f_test_pred ,f_train_pred
 
+
+    def ridge(self, X_train, X_test, f_train, lam):
+        beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
+        f_tilde = X_train @ beta
+        f_pred = X_test @ beta
+        
+        return f_tilde, f_pred
+    
     def MSE(self, y, y_tilde):
         error = np.mean((y - y_tilde)**2)
         return error
@@ -95,6 +103,36 @@ class Regression:
             z_pred[:,i] = self.OLS(X_new, self.X_test, f_new)[1]
         return z_pred
 
+    def k_fold(self,X,k,deg):
+        # X = np.random.shuffle(X_train)
+        
+        
+        #splitting data
+        X_lst1 = np.split(X,k)
+        f_lst1 = np.split(self.f,k)
+        
+        X_lst = []
+        f_lst = []
+        mse_score = np.zeros(k)
+
+        #getting rid of nested list
+        for i in range(len(X_lst1)):
+            X_lst.append(X_lst1[i][0])
+            f_lst.append(f_lst1[i][0])
+            
+        X_lst = np.array(X_lst)
+        f_lst = np.array(f_lst)
+        
+        for i in range(len(X_lst)):
+            X_train = np.concatenate([X_lst[:i],X_lst[i+1:]])
+            f_train = np.concatenate([f_lst[:i],f_lst[i+1:]])
+            X_test = X_lst[i]
+            f_test = f_lst[i]
+
+            f_tilde, f_pred = self.OLS(X_train,X_test,f_train)
+            mse_score[i] = self.mse(f_test,f_pred)
+            
+        print ('deg',deg,'score',mse_score,'\n')
     def confidence_interval(self, perc, trials):
         z_pred = self.bootstrap(trials) # Bootstrap sampling
         means = np.mean(z_pred, axis=0) # Calculate the mean of each coloumn (each prediction)

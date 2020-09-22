@@ -69,14 +69,14 @@ class Regression:
         f_train_pred = X_train @ B
         f_test_pred = X_test @ B
         return f_test_pred ,f_train_pred
-    
+
     def ridge(self, X_train, X_test, f_train, lam):
             beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
             f_tilde = X_train @ beta
             f_pred = X_test @ beta
-            
+
             return f_tilde, f_pred
-        
+
     def MSE(self, y, y_tilde):
         error = np.mean((y - y_tilde)**2)
         return error
@@ -104,15 +104,15 @@ class Regression:
 
     def k_fold(self,X,k,deg):
         # X = np.random.shuffle(X_train)
-        
+
         #scaling data
         X[:,1:] -= np.mean(X[:,1:], axis=0)
         f = self.f - np.mean(self.f)
-        
+
         #splitting data
         X_lst1 = np.split(X,k)
         f_lst1 = np.split(f,k)
-        
+
         X_lst = []
         f_lst = []
         mse_score = np.zeros(k)
@@ -121,41 +121,41 @@ class Regression:
         for i in range(len(X_lst1)):
             X_lst.append(X_lst1[i])
             f_lst.append(f_lst1[i])
-            
+
         X_lst = np.array(X_lst)
         f_lst = np.array(f_lst)
-        
+
         for i in range(len(X_lst)):
-            
+
             X_train = np.concatenate([X_lst[:i],X_lst[i+1:]])
             f_train = np.concatenate([f_lst[:i],f_lst[i+1:]])
             X_test = X_lst[i]
             f_test = f_lst[i]
 
-                        
+
             f_train_lst = []
             X_train_lst = []
-            
+
             # do this in the other loop?
             for k in range(len(X_train)):
                 for j in range(len(X_train[k])):
                     f_train_lst.append(f_train[k][j])
                     X_train_lst.append(X_train[k][j])
-                
+
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)
-            
+
             f_tilde, z_pred = self.OLS(X_train,X_test,f_train)
 
-            
+
             mse_score[i] = self.MSE(f_test,f_pred)
-            
+
         error = np.mean(mse_score)
-            
-            
-        
+
+
+
         print ('deg',deg,'score',error,'\n')
-        
+
         return f_pred
     def confidence_interval(self, perc, trials):
         z_pred = self.bootstrap(trials) # Bootstrap sampling
@@ -195,17 +195,17 @@ class Regression:
 
             test_err[deg] += mean_squared_error(self.f_test,f_test_pred)
             train_err[deg] += mean_squared_error(self.f_train,f_train_pred)
-            
+
             z_pred = self.bootstrap(trials)
             bias_arr[deg] = self.bias(f_test,z_pred)
             variance_arr[deg] = self.variance(z_pred)
-            
-            
+
+
             plt.plot(complexity, bias_arr, label = 'bias')
             plt.plot(complexity, variance_arr , label = 'variance')
             plt.legend()
             plt.show()
-            
+
 
         plt.plot(complexity, np.log10(train_err), label='Training Error')
         plt.plot(complexity, np.log10(test_err), label='Test Error')
@@ -213,29 +213,6 @@ class Regression:
         plt.ylabel('log10[MSE]')
         plt.legend()
         plt.show()
-
-
-reg = Regression(400)
-reg.dataset2D()#mse_train[i] = self.mean_squared_error(y_model[:75],self.f_train)
-            #mse_test[i] = self.mean_squared_error(y_model[:25],self.f_test)
-X = reg.design_matrix_homemade(2)
-reg.split_data(X,reg.f)
-B = reg.betas(reg.X_train, reg.f_train)
-sigma_B = reg.beta_variance(B)
-f_pred, f_tilde = reg.linear_regression_homemade()
-print("R2: ", reg.r_squared(reg.f_train, f_tilde))
-print("MSE: ", reg.mean_squared_error_homemade(reg.f_test, f_pred))
-print("Beta variance: ", sigma_B)
-
-reg.bias_variance()
-
-deg=2; boot=100
-X = reg.design_matrix_homemade(deg)
-reg.split_data(X,reg.f)
-f_pred, f_tilde = reg.linear_regression_homemade()
-f_pred_boot = reg.bootstrap(boot)
-
-        return np.var(z_tilde)
 
 if __name__ == "__main__":
     n=1000; deg=2

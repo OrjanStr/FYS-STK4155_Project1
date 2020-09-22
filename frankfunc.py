@@ -32,7 +32,7 @@ class Regression:
         self.y = np.random.randn(self.n)
 
         # Setting up the FrankeFunction with added noise
-        noise = 0.1*np.random.randn(self.n)
+        noise = 0.01*np.random.randn(self.n)
 
         self.f = self._franke_function(self.x, self.y) + noise
 
@@ -41,7 +41,7 @@ class Regression:
 
     def design_matrix(self, deg):
         # Setting up matrix
-        self.p = int(0.5 * (deg + 1) * (deg + 2))
+        self.p = int(0.5 * ((deg + 1) * (deg + 2)))
         X = np.zeros((self.n, self.p))
         # Filling in values
         idx = 0
@@ -117,13 +117,8 @@ class Regression:
         f_lst = []
         mse_score = np.zeros(k)
 
-        #getting rid of nested list
-        for i in range(len(X_lst1)):
-            X_lst.append(X_lst1[i])
-            f_lst.append(f_lst1[i])
-
-        X_lst = np.array(X_lst)
-        f_lst = np.array(f_lst)
+        X_lst = np.array(X_lst1)
+        f_lst = np.array(f_lst1)
 
         for i in range(len(X_lst)):
 
@@ -131,7 +126,6 @@ class Regression:
             f_train = np.concatenate([f_lst[:i],f_lst[i+1:]])
             X_test = X_lst[i]
             f_test = f_lst[i]
-
 
             f_train_lst = []
             X_train_lst = []
@@ -157,6 +151,7 @@ class Regression:
         print ('deg',deg,'score',error,'\n')
 
         return f_pred
+
     def confidence_interval(self, perc, trials):
         z_pred = self.bootstrap(trials) # Bootstrap sampling
         means = np.mean(z_pred, axis=0) # Calculate the mean of each coloumn (each prediction)
@@ -170,52 +165,8 @@ class Regression:
     def variance(self, z_tilde):
         return mp.mean( np.var(z_tilde) )
 
-    def bias_variance(self):
-        """
-
-        Returns
-        -------
-        None.
-        """
-        max_complexity = 12
-        trials = 100
-        complexity = np.linspace(1,max_complexity,max_complexity)
-        test_err = np.zeros(len(complexity))
-        train_err = np.zeros(len(complexity))
-        bias_arr = np.zeros(len(complexity))
-        variance_arr = np.zeros(len(complexity))
-
-        for deg in range(1,max_complexity):
-            test_err[deg] = 0
-            train_err[deg] = 0
-
-            X = self.design_matrix_homemade(deg)
-            self.split_data(X,self.f)
-            f_test_pred, f_train_pred = self.linear_regression_homemade()
-
-            test_err[deg] += mean_squared_error(self.f_test,f_test_pred)
-            train_err[deg] += mean_squared_error(self.f_train,f_train_pred)
-
-            z_pred = self.bootstrap(trials)
-            bias_arr[deg] = self.bias(f_test,z_pred)
-            variance_arr[deg] = self.variance(z_pred)
-
-
-            plt.plot(complexity, bias_arr, label = 'bias')
-            plt.plot(complexity, variance_arr , label = 'variance')
-            plt.legend()
-            plt.show()
-
-
-        plt.plot(complexity, np.log10(train_err), label='Training Error')
-        plt.plot(complexity, np.log10(test_err), label='Test Error')
-        plt.xlabel('Polynomial degree')
-        plt.ylabel('log10[MSE]')
-        plt.legend()
-        plt.show()
-
 if __name__ == "__main__":
-    n=1000; deg=2
+    n=500; deg=2
 
     reg = Regression(500)
     reg.dataset2D()
@@ -225,7 +176,8 @@ if __name__ == "__main__":
     B_var = reg.beta_variance()
 
     print("R2: ", reg.R2(reg.f_train, f_tilde))
-    print("MSE: ", reg.MSE(reg.f_test, f_pred))
+    print("MSE test: ", reg.MSE(reg.f_test, f_pred))
+    print("MSE train: ", reg.MSE(reg.f_train, f_tilde))
     print("95% Confidence Interval: ", reg.confidence_interval(95,100))
 
     max_complexity = 10
@@ -239,11 +191,13 @@ if __name__ == "__main__":
     bias = np.zeros(len(complexity))
     variance = np.zeros(len(complexity))
 
+    boot_mse = np.zeros(len(complexity))
+
     for i in range(max_complexity):
         reg = Regression(n)
         reg.dataset2D() # Set up data
         X = reg.design_matrix( int(complexity[i]) ) # Create design matrix
-        reg.split_scale(X,reg.f) # Split and scale data
+        reg.split_scale(X,reg.f,scale=False) # Split and scale data
         f_test_pred, f_train_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
         test_err[i] = reg.MSE(reg.f_test, f_test_pred)
@@ -254,12 +208,20 @@ if __name__ == "__main__":
         bias[i] = reg.bias(reg.f_test, f_hat)
         variance[i] = np.mean(np.var(z_pred, axis=0))
 
+        boot_mse[i] = reg.MSE(reg.f_train, f_hat)
+
     plt.plot(complexity, train_err, label='Training Error')
     plt.plot(complexity, test_err, label='Test Error')
     plt.xlabel('Complexity')
     plt.ylabel('MSE')
     plt.legend()
     plt.title("Training vs Test Error (MSE): n = %i"%n)
+    plt.show()
+
+    plt.plot(complexity, boot_mse, label='MSE')
+    plt.xlabel('Complexity')
+    plt.legend()
+    plt.title("MSE Bootstrap: Training Data: n=%i, bootstraps=%i"%(n,boots))
     plt.show()
 
     plt.plot(complexity, bias, label='Bias')

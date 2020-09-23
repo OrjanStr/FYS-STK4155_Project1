@@ -209,7 +209,7 @@ for i in range(maxdeg):
     bias2[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )
     variance2[i] = np.mean(np.var(f_strap, axis=1, keepdims=True))
     
-    reg.k_fold(reg.X,5,deg)
+    # reg.k_fold(reg.X,5,deg)
     
 plt.plot(degrees, train_error, label='Training Error')
 plt.plot(degrees, test_error, label='Test Error')

@@ -101,8 +101,6 @@ class Regression():
         f_lst = []
         
         mse_score = np.zeros(k)
-        bias = np.zeros(k)
-        variance = np.zeros(k)
         test_err_arr = np.zeros(k)
         train_err_arr = np.zeros(k)
 
@@ -143,12 +141,7 @@ class Regression():
             
             # bias[i] = np.mean((f_test - np.mean(z_pred))**2)
             average_model = np.mean(z_pred)
-            bias[i] = np.mean((average_model - f_test)**2)
-        
-            
-            variance[i] = np.mean(np.var(z_pred, axis=0))
-        
-        
+
             test_err_arr[i] = np.mean( (z_pred - f_test)**2 )
             train_err_arr[i] = np.mean( (f_tilde - f_train)**2 )
 
@@ -157,26 +150,37 @@ class Regression():
             
         error = np.mean(mse_score)
         
-        # print ('variance', np.mean(variance))
         # print ('test_error', np.mean(test_err_arr))
-        # print ('train_error',np.mean(train_err_arr))
-        # print ('bias', np.mean(bias))
-        
+        # print ('train_error',np.mean(train_err_arr))       
         # print ('deg',deg,'score',error,'\n')
         
-        return np.mean(bias), np.mean(variance), error , np.mean(test_err_arr), np.mean(train_err_arr)
+        return error , np.mean(test_err_arr), np.mean(train_err_arr)
 
 
-n = 200; maxdeg = 10
-# Arrays for plotting error
+n = 400; maxdeg = 15
 degrees = np.linspace(1,maxdeg,maxdeg)
+
+#array for MSE
+mse_kfold = np.zeros(maxdeg)
+mse_bootstrap = np.zeros(maxdeg)
+mse_lasso = np.zeros(maxdeg)
+
+#creating array for train and test error
 train_error = np.zeros(maxdeg)
 test_error = np.zeros(maxdeg)
+
+train_error_bootstrap = np.zeros(maxdeg)
+test_error_bootstrap = np.zeros(maxdeg)
+
+test_error_kfold = np.zeros(maxdeg)
+train_error_kfold = np.zeros(maxdeg)
+
+test_error_lasso = np.zeros(maxdeg)
+train_error_lasso = np.zeros(maxdeg)
+
 # Arrays for plotting Bias and Variance
 bias = np.zeros(maxdeg)
 variance = np.zeros(maxdeg)
-bias2 = np.zeros(maxdeg)
-variance2 = np.zeros(maxdeg)
 
 deg = 2
 reg = Regression(n)
@@ -195,6 +199,7 @@ for i in range(maxdeg):
     reg.split(reg.X, reg.f)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
+    lam= 0.3
     # Train and Test Error
     test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
@@ -206,17 +211,32 @@ for i in range(maxdeg):
     bias[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )
     variance[i] = np.mean(np.var(f_strap, axis=0))
 
-    bias2[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )
-    variance2[i] = np.mean(np.var(f_strap, axis=1, keepdims=True))
+    #--kfold--
+    mse_kfold[i], test_error_kfold[i], train_error_kfold[i] = reg.k_fold(reg.X,5,deg)
     
-    # reg.k_fold(reg.X,5,deg)
+    #--lasso--
+    f_pred_lasso, f_tilde_lasso  = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam)
     
-plt.plot(degrees, train_error, label='Training Error')
+    test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
+    train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
+
+
+
+
+plt.title('OLS Error')
+plt.plot(degrees, train_error, label='Train Error')
 plt.plot(degrees, test_error, label='Test Error')
 plt.legend()
 plt.show()
 
-plt.plot(degrees, bias, label='Bias')
-plt.plot(degrees, variance, label='Variance')
+plt.title('K-fold Error')
+plt.plot(degrees, test_error_kfold, label='Test Error')
+plt.plot(degrees, train_error_kfold, label='Train Error')
+plt.legend()
+plt.show()
+
+plt.title('Lasso Error')
+plt.plot(degrees, test_error_lasso, label='Test Error')
+plt.plot(degrees, train_error_lasso, label='Train Error')
 plt.legend()
 plt.show()

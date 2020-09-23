@@ -61,15 +61,12 @@ class Regression():
 
     def bootstrap(self, X_test, X_train, f_train, trials):
         z_pred = np.zeros((self.f_test.shape[0], trials))
-        bias = np.zeros(trials)
-        variance = np.zeros(trials)
         for i in range(trials):
             X_new, f_new = resample(X_train, f_train)
             z_pred[:,i] = self.OLS(X_new, X_test, f_new)[1]
-
         return z_pred
 
-n = 200; maxdeg = 10
+n = 160; maxdeg = 10
 # Arrays for plotting error
 degrees = np.linspace(1,maxdeg,maxdeg)
 train_error = np.zeros(maxdeg)

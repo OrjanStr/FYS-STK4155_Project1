@@ -11,6 +11,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.utils import resample
+from sklearn.linear_model import Lasso
 
 class Regression():
     def __init__(self, n):
@@ -204,7 +205,7 @@ for i in range(maxdeg):
     bias[i] = np.mean( (reg.f_test - f_hat)**2 , keepdims=True)
     variance[i] = np.mean(np.var(f_strap, axis=1, keepdims=True))
 
-    reg.k_fold(reg.X,5,deg)
+    #reg.k_fold(reg.X,5,deg)
 
 plt.plot(degrees, train_error, label='Training Error')
 plt.plot(degrees, test_error, label='Test Error')

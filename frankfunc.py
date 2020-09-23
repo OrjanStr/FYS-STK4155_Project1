@@ -81,6 +81,15 @@ class Regression():
         f_pred = X_test @ beta
 
         return f_tilde, f_pred
+    
+    def lasso(self,X_train, X_test, f_train, lam):
+        lassoreg = Lasso(alpha = lam).predict(X_train, X_test, f_train)
+        f_tilde = lassoreg.fit(X_train)
+        f_pred = lassoreg.fit(X_test)
+        
+        return f_tilde, f_pred
+        
+        
 
     def k_fold(self,X,k,deg):
         # X = np.random.shuffle(X_train)

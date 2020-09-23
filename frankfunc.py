@@ -11,6 +11,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.utils import resample
+from sklearn.linear_model import Lasso
 
 class Regression():
     def __init__(self, n):
@@ -64,12 +65,19 @@ class Regression():
 
         return f_tilde, f_pred
 
-    def bootstrap(self, X_test, X_train, f_train, trials):
+    def bootstrap(self, X_train, X_test, f_train, trials):
         z_pred = np.zeros((self.f_test.shape[0], trials))
         for i in range(trials):
             X_new, f_new = resample(X_train, f_train)
             z_pred[:,i] = self.OLS(X_new, X_test, f_new)[1]
         return z_pred
+    
+    def lasso(self, X_train, X_test, f_train, lam):
+        lassoreg = Lasso(alpha = lam).fit(X_train,f_train)
+        f_pred = lassoreg.predict(X_test)
+        f_tilde = lassoreg.predict(X_train)
+           
+        return f_pred, f_tilde 
     
     def ridge(self, X_train, X_test, f_train, lam):
         beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
@@ -192,7 +200,7 @@ for i in range(maxdeg):
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
     # Bootstrap Method for Bias and Variance
-    f_strap = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100)
+    f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100)
     f_hat = np.mean(f_strap, axis=1, keepdims=True) # Finding the mean for every coloumn element
 
     bias[i] = np.mean( (reg.f_test - np.mean(f_hat))**2 )

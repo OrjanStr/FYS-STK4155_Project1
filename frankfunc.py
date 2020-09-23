@@ -171,8 +171,14 @@ n = 400; maxdeg = 15
 degrees = np.linspace(1,maxdeg,maxdeg)
 
 lam_lst = np.logspace(-4,1,20)
-lam_test_lst = np.zeros(len(lam_lst))
-lam_train_lst = np.zeros(len(lam_lst))
+
+lam_test_lasso = np.zeros(len(lam_lst))
+lam_train_lasso = np.zeros(len(lam_lst))
+
+lam_test_ridge = np.zeros(len(lam_lst))
+lam_train_ridge = np.zeros(len(lam_lst))
+
+
 #array for MSE
 mse_kfold = np.zeros(maxdeg)
 mse_bootstrap = np.zeros(maxdeg)
@@ -195,6 +201,9 @@ train_error_lasso = np.zeros(maxdeg)
 bias = np.zeros(maxdeg)
 variance = np.zeros(maxdeg)
 
+deg_lam_error_lasso = np.zeros((maxdeg,len(lam_lst)))
+deg_lam_error_ridge = np.zeros((maxdeg,len(lam_lst)))
+
 strap_error = np.zeros(maxdeg)
 
 deg = 2
@@ -209,79 +218,147 @@ print(np.mean( (reg.f_test - f_pred)**2 ))
     
 
 
-# for lam_value in lam_lst:
+# for i, lam_value in enumerate(lam_lst):
 #     reg = Regression(n)
 #     reg.dataset2D()
 #     reg.design_matrix(deg)
 #     reg.split(reg.X, reg.f)
-
+    
+#     #--ridge--
+#     a, lam_test_ridge[i], lam_train_ridge[i] = reg.k_fold(reg.X,5,deg)
+    
 #     #--lasso--
 #     f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
      
-#     lam_test_lst[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
-#     lam_train_lst[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
+#     lam_test_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
+#     lam_train_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
     
-    
-    
-    
-lam_value = 0.1
-for i in range(maxdeg):
-    deg = int(degrees[i])
-    reg = Regression(n)
-    reg.dataset2D()
-    reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
-    f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+  
+# lam_value = 0.1
+# for i in range(maxdeg):
+#     deg = int(degrees[i])
+#     reg = Regression(n)
+#     reg.dataset2D()
+#     reg.design_matrix(deg)
+#     reg.split(reg.X, reg.f)
+#     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
-    # Train and Test Error
-    test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
-    train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
+#     # Train and Test Error
+#     test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
+#     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
-    # Bootstrap Method for Bias and Variance
-    f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
-    f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
+#     # Bootstrap Method for Bias and Variance
+#     f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+#     f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
-    strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
-    bias[i] = np.mean( (reg.f_test - f_hat)**2)
-    variance[i] = np.mean(np.var(f_strap, axis=1))
+#     strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
+#     bias[i] = np.mean( (reg.f_test - f_hat)**2)
+#     variance[i] = np.mean(np.var(f_strap, axis=1))
 
-    #reg.k_fold(reg.X,5,deg)
+#     #reg.k_fold(reg.X,5,deg)
 
-    #--kfold--
-    mse_kfold[i], test_error_kfold[i], train_error_kfold[i] = reg.k_fold(reg.X,5,deg)
+#     #--kfold--
+#     mse_kfold[i], test_error_kfold[i], train_error_kfold[i] = reg.k_fold(reg.X,5,deg)
 
-    #--lasso--
-    f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
-    
-    
+#     #--lasso--
+#     f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
         
-    test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
-    train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
+#     test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
+#     train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )   
     
     
+for k, lam_value in enumerate(lam_lst):   
+    for i in range(maxdeg):
+        deg = int(degrees[i])
+        reg = Regression(n)
+        reg.dataset2D()
+        reg.design_matrix(deg)
+        reg.split(reg.X, reg.f)
+    
+        # Bootstrap Method for Bias and Variance
+        f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+
+        deg_lam_error_ridge[i,k] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
+    
+        #--lasso--
+        f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
+
+        deg_lam_error_lasso[i,k] =  np.mean( (f_pred_lasso - reg.f_test)**2 )
+
+    
 
 
 
-plt.title('OLS Error')
-plt.plot(degrees, train_error, label='Train Error')
-plt.plot(degrees, test_error, label='Test Error')
-plt.legend()
+# plt.title('OLS Error')
+# plt.plot(degrees, train_error, label='Train Error')
+# plt.plot(degrees, test_error, label='Test Error')
+# plt.xlabel('complexity')
+# plt.ylabel('Error')
+# plt.legend()
+# plt.show()
+
+# plt.title('K-fold Error')
+# plt.plot(degrees, test_error_kfold, label='Test Error')
+# plt.plot(degrees, train_error_kfold, label='Train Error')
+# plt.xlabel('complexity')
+# plt.ylabel('Error')
+# plt.legend()
+# plt.show()
+
+# plt.title('Lasso Error')
+# plt.plot(degrees, test_error_lasso, label='Test Error')
+# plt.plot(degrees, train_error_lasso, label='Train Error')
+# plt.xlabel('complexity')
+# plt.ylabel('Error')
+# plt.legend()
+# plt.show()
+
+# plt.title('Lasso Error')
+# plt.plot(lam_lst, lam_test_lasso, label='Test Error')
+# plt.plot(lam_lst, lam_train_lasso, label='Train Error')
+# plt.xlabel('lambda')
+# plt.ylabel('Error')
+# plt.legend()
+# plt.show()
+
+# plt.title('Ridge Error')
+# plt.plot(lam_lst, lam_test_ridge, label='Test Error')
+# plt.plot(lam_lst, lam_train_ridge, label='Train Error')
+# plt.xlabel('lambda')
+# plt.ylabel('Error')
+# plt.legend()
+# plt.show()
+
+# plt.plot(degrees, bias, label='Bias')
+# plt.plot(degrees, variance, label='Variance')
+# plt.plot(degrees, strap_error, label='Bootstrap error')
+# plt.xlabel('complexity')
+# plt.legend()
+# plt.show()
+
+
+fig1, ax1 = plt.subplots() 
+cs = ax1.contourf(lam_lst, degrees, deg_lam_error_ridge, cmap ='Greens', extend ='both', alpha = 1) 
+fig1.colorbar(cs) 
+plt.ylabel('degree')
+plt.xlabel('lambda')
+ax1.set_title('Ridge Error') 
 plt.show()
 
-plt.title('K-fold Error')
-plt.plot(degrees, test_error_kfold, label='Test Error')
-plt.plot(degrees, train_error_kfold, label='Train Error')
-plt.legend()
+fig1, ax1 = plt.subplots() 
+cs = ax1.contourf(lam_lst, degrees, deg_lam_error_lasso, cmap ='Greens', extend ='both', alpha = 1) 
+fig1.colorbar(cs) 
+plt.ylabel('degree')
+plt.xlabel('lambda')
+ax1.set_title('Lasso Error') 
 plt.show()
 
-plt.title('Lasso Error')
-plt.plot(degrees, test_error_lasso, label='Test Error')
-plt.plot(degrees, train_error_lasso, label='Train Error')
-plt.legend()
-plt.show()
 
-plt.plot(degrees, bias, label='Bias')
-plt.plot(degrees, variance, label='Variance')
-plt.plot(degrees, strap_error, label='Bootstrap error')
-plt.legend()
-plt.show()
+
+
+
+
+
+
+
+    

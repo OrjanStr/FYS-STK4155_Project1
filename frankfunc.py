@@ -57,7 +57,11 @@ class Regression():
         mse = np.mean((y - y_pred)**2)
         return mse
 
-    def OLS(self, X_train, X_test, f_train):
+    def OLS(self, X_train, X_test, f_train, lam=0):
+        if lam>0:
+            raise ValueError('You are trying to use OLS with a lambda value greater than 0')
+            
+            
         beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ f_train
 
         f_tilde = X_train @ beta
@@ -65,13 +69,13 @@ class Regression():
 
         return f_tilde, f_pred
 
-    def bootstrap(self, X_test, X_train, f_train, trials):
+    def bootstrap(self, X_test, X_train, f_train, trials, method, lam):
         mse = np.zeros(trials)
 
         z_pred = np.zeros((self.f_test.shape[0], trials))
         for i in range(trials):
             X_new, f_new = resample(X_train, f_train)
-            z_pred[:,i] = self.OLS(X_new, X_test, f_new)[1]
+            z_pred[:,i] = method(X_new, X_test, f_new, lam)[1]
             mse[i] = self.MSE( self.f_test, z_pred[:,i] )
         return z_pred, mse
 
@@ -83,9 +87,10 @@ class Regression():
         return f_tilde, f_pred
     
     def lasso(self,X_train, X_test, f_train, lam):
-        lassoreg = Lasso(alpha = lam).predict(X_train, X_test, f_train)
-        f_tilde = lassoreg.fit(X_train)
-        f_pred = lassoreg.fit(X_test)
+        
+        lassoreg = Lasso(alpha = lam).fit(X_train,f_train)
+        f_tilde = lassoreg.predict(X_train)
+        f_pred = lassoreg.predict(X_test)
         
         return f_tilde, f_pred
         
@@ -165,6 +170,9 @@ class Regression():
 n = 400; maxdeg = 15
 degrees = np.linspace(1,maxdeg,maxdeg)
 
+lam_lst = np.logspace(-4,1,20)
+lam_test_lst = np.zeros(len(lam_lst))
+lam_train_lst = np.zeros(len(lam_lst))
 #array for MSE
 mse_kfold = np.zeros(maxdeg)
 mse_bootstrap = np.zeros(maxdeg)
@@ -198,6 +206,25 @@ reg.split(reg.X, reg.f)
 f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 print(np.mean( (reg.f_test - f_pred)**2 ))
 
+    
+
+
+# for lam_value in lam_lst:
+#     reg = Regression(n)
+#     reg.dataset2D()
+#     reg.design_matrix(deg)
+#     reg.split(reg.X, reg.f)
+
+#     #--lasso--
+#     f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
+     
+#     lam_test_lst[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
+#     lam_train_lst[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
+    
+    
+    
+    
+lam_value = 0.1
 for i in range(maxdeg):
     deg = int(degrees[i])
     reg = Regression(n)
@@ -206,18 +233,17 @@ for i in range(maxdeg):
     reg.split(reg.X, reg.f)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
 
-    lam= 0.3
     # Train and Test Error
     test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
     # Bootstrap Method for Bias and Variance
-    f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100)
-    f_hat = np.mean(f_strap, axis=1, keepdims=True) # Finding the mean for every coloumn element
+    f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+    f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
-    strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1, keepdims=True) )
-    bias[i] = np.mean( (reg.f_test - f_hat)**2 , keepdims=True)
-    variance[i] = np.mean(np.var(f_strap, axis=1, keepdims=True))
+    strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
+    bias[i] = np.mean( (reg.f_test - f_hat)**2)
+    variance[i] = np.mean(np.var(f_strap, axis=1))
 
     #reg.k_fold(reg.X,5,deg)
 
@@ -225,11 +251,14 @@ for i in range(maxdeg):
     mse_kfold[i], test_error_kfold[i], train_error_kfold[i] = reg.k_fold(reg.X,5,deg)
 
     #--lasso--
-    f_pred_lasso, f_tilde_lasso  = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam)
-
+    f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
+    
+    
+        
     test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
     train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
-
+    
+    
 
 
 
@@ -245,9 +274,12 @@ plt.plot(degrees, train_error_kfold, label='Train Error')
 plt.legend()
 plt.show()
 
-#plt.title('Lasso Error')
-#plt.plot(degrees, test_error_lasso, label='Test Error')
-#plt.plot(degrees, train_error_lasso, label='Train Error')
+plt.title('Lasso Error')
+plt.plot(degrees, test_error_lasso, label='Test Error')
+plt.plot(degrees, train_error_lasso, label='Train Error')
+plt.legend()
+plt.show()
+
 plt.plot(degrees, bias, label='Bias')
 plt.plot(degrees, variance, label='Variance')
 plt.plot(degrees, strap_error, label='Bootstrap error')

@@ -199,11 +199,11 @@ for i in range(maxdeg):
 
     # Bootstrap Method for Bias and Variance
     f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100)
-    f_hat = np.mean(f_strap, axis=1, keepdims=True) # Finding the mean for every coloumn element
+    f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
-    strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1, keepdims=True) )
-    bias[i] = np.mean( (reg.f_test - f_hat)**2 , keepdims=True)
-    variance[i] = np.mean(np.var(f_strap, axis=1, keepdims=True))
+    strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
+    bias[i] = np.mean( (reg.f_test - f_hat)**2 )
+    variance[i] = np.mean(np.var(f_strap, axis=1))
 
     #reg.k_fold(reg.X,5,deg)
 

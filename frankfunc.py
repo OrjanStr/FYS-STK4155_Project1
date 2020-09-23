@@ -43,7 +43,7 @@ class Regression():
         self.X = X
         return X
 
-    def split(self, x, y, X, f, scale=True):
+    def split(self, X, f, scale=True):
         # Scaling Data
         if scale:
             X[:,1:] -= np.mean(X[:,1:], axis=0)

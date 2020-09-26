@@ -186,7 +186,7 @@ class Regression():
         return error , np.mean(test_err_arr), np.mean(train_err_arr)
 
 
-n = 400; maxdeg = 2
+n = 400; maxdeg = 10
 degrees = np.linspace(1,maxdeg,maxdeg)
 
 lam_lst = np.logspace(-4,1,20)
@@ -273,12 +273,11 @@ for i, lam_value in enumerate(lam_lst):
     lam_test_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
     lam_train_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
 
-
 lam_value = 0.001
+reg = Regression(n)
+reg.dataset2D()
 for i in range(maxdeg):
     deg = int(degrees[i])
-    reg = Regression(n)
-    reg.dataset2D()
     reg.design_matrix(deg)
     reg.split(reg.X, reg.f)
     f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
@@ -286,7 +285,7 @@ for i in range(maxdeg):
     # Train and Test Error
     test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
     train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
-
+"""
     # Bootstrap Method for Bias and Variance
     f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
     f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
@@ -312,7 +311,7 @@ for i in range(maxdeg):
 
     test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
     train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
-
+"""
 # for creating colormap plots
 # for k, lam_value in enumerate(lam_lst):
 #     for i in range(maxdeg):
@@ -336,13 +335,13 @@ for i in range(maxdeg):
 
 
 
-# plt.title('OLS Error')
-# plt.plot(degrees, train_error, label='Train Error')
-# plt.plot(degrees, test_error, label='Test Error')
-# plt.xlabel('complexity')
-# plt.ylabel('Error')
-# plt.legend()
-# plt.show()
+plt.title('OLS Error')
+plt.plot(degrees, train_error, label='Train Error')
+plt.plot(degrees, test_error, label='Test Error')
+plt.xlabel('complexity')
+plt.ylabel('Error')
+plt.legend()
+plt.show()
 
 # plt.title('K-fold Error')
 # plt.plot(degrees, test_error_kfold, label='Test Error')

@@ -257,12 +257,12 @@ axs[1].plot(lam_lst[:10], lasso_coefs[:10])
 plt.show()
 #----------------------------------------------
 
+reg = Regression(n)
+reg.dataset2D()
+reg.design_matrix(deg)
+reg.split(reg.X, reg.f)
 
 for i, lam_value in enumerate(lam_lst):
-    reg = Regression(n)
-    reg.dataset2D()
-    reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
 
     #--ridge--
     a, lam_test_ridge[i], lam_train_ridge[i] = reg.k_fold(reg.X,5,deg)

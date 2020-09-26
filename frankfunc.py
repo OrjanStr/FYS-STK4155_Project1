@@ -113,6 +113,8 @@ class Regression():
 
 
 
+
+
     def k_fold(self,X,k,deg):
         # X = np.random.shuffle(X_train)
 

@@ -188,10 +188,10 @@ class Regression():
 
 
 
-def heatmap(x,y, label_x, label_y, title, save = False, filename = None):
+def heatmap(x, y, z, label_x, label_y, title, save = False, filename = None):
     
     fig1, ax1 = plt.subplots()
-    cs = ax1.contourf(lam_lst, degrees, deg_lam_error_ridge, cmap ='Greens', extend ='both', alpha = 1)
+    cs = ax1.contourf(lam_lst, degrees, z, cmap ='Greens', extend ='both', alpha = 1)
     fig1.colorbar(cs)
     plt.ylabel(label_y)
     plt.xlabel(label_x)
@@ -390,8 +390,8 @@ if __name__ == "__main__":
 
             deg_lam_error_lasso[i,k] =  np.mean( (f_pred_lasso - reg.f_test)**2 )
 
-    heatmap(lam_lst, degrees, "lambda", "complexity", "Ridge Error", save = True , filename = 'ridge_heatmap')
-    heatmap(lam_lst, degrees, "lambda", "complexity", "Lasso Error")
+    heatmap(lam_lst, degrees, deg_lam_error_ridge, "lambda", "complexity", "Ridge Error", save = True , filename = 'ridge_heatmap')
+    heatmap(lam_lst, degrees, deg_lam_error_lasso,"lambda", "complexity", "Lasso Error")
     single_plot([degrees, degrees, degrees], [bias, variance, strap_error], 'complexity', 'error', ['Bias', 'Variance', 'Bootstrap Error'], 'Bias, Variance, Error')
     single_plot([degrees, degrees], [train_error, test_error], 'Complexity', 'Error', ['Train Error', 'Test Error'], 'OLS Error')
     compare_plot([degrees,degrees], [test_error_kfold, test_error_bootstrap], 'Complexity', 'Error', ['K-Fold', 'Bootstrap'], 'K-Fold VS Bootstrap', ['K-Fold Error', 'Bootstrap Error'])

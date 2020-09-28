@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from frankfunc import Regression
+import matplotlib.cbook as cbook
+import matplotlib.colors as colors
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')

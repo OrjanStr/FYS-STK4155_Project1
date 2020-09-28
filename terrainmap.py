@@ -3,7 +3,7 @@ from imageio import imread
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from frankfunk import Regression
+from frankfunc import Regression
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
@@ -18,8 +18,12 @@ x, y = np.meshgrid(x,y)
 
 # Raveling nata to get into shape (x_dim*y_dim,)
 z = terrain1.ravel()
+z = z.astype("float64") # Converting to float
 x = x.ravel()
 y = y.ravel()
+
+z -= np.mean(z)
+print("operation successful")
 
 plt.figure()
 plt.title('Terrain over Norway')
@@ -28,11 +32,24 @@ plt.xlabel('X')
 plt.ylabel('Y')
 plt.show()
 
-
+maxdeg = 20
 reg = Regression()
 reg.data_setup(x,y,z)
-reg.design_matrix(4)
-X_train, X_test, f_train , f_test = reg.split()
-f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
+degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
+train_error = np.zeros(maxdeg)
+test_error  = np.zeros(maxdeg)
 
-heatmap(x, y, , "m", "m", "Terrain Data")
+for i in range(maxdeg):
+    deg = degrees[i]
+    reg.design_matrix(deg)
+    X_train, X_test, f_train , f_test = reg.split(reg.X, reg.f)
+    f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
+    train_error[i] = np.mean( (f_tilde - f_train)**2 )
+    test_error[i] = np.mean( (f_pred - f_test)**2 )
+
+plt.plot(degrees, train_error, label = 'Train error')
+plt.plot(degrees, test_error, label = 'Test error')
+plt.legend()
+plt.show()
+
+heatmap(x, y, z, "m", "m", "Terrain Data")

@@ -28,13 +28,13 @@ class Regression():
         self.y = np.random.rand(n)
         noise = 0.1*np.random.randn(n)
         self.f = self.franke_function(self.x, self.y) + noise
-        
+
         self.o2 = np.var(noise)
-        
+        self.n = n
     def data_setup(self,x,y,z):
         self.n = len(x)
         self.x ,self.y, self.f = x,y,z
-    
+
     def design_matrix(self, deg):
         # features
         p = int(0.5*( (deg+1)*(deg+2) ))
@@ -191,7 +191,7 @@ class Regression():
 
 
 def heatmap(x, y, z, label_x, label_y, title, save = False, filename = None):
-    
+
     fig1, ax1 = plt.subplots()
     cs = ax1.contourf(lam_lst, degrees, z, cmap ='Greens', extend ='both', alpha = 1)
     fig1.colorbar(cs)
@@ -203,32 +203,32 @@ def heatmap(x, y, z, label_x, label_y, title, save = False, filename = None):
     plt.show()
 
 def single_plot(x,y, label_x, label_y, func_label, title, save = False, filename = None):
-    
+
     plt.title(title)
-    
+
     for i in range(len(x)):
         plt.plot(x[i], y[i], label = func_label[i])
-    
+
     plt.xlabel(label_x)
     plt.ylabel(label_y)
     plt.legend()
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()
-    
-    
+
+
 def compare_plot(x, y, label_x, label_y,
                  graph_label, title, subtitle, save = False, filename = None):
-    
+
     fig, axs = plt.subplots(2)
     fig.suptitle(title)
-    
+
     axs[0].plot(x[0], y[0])
     axs[0].title.set_text(subtitle[0])
     axs[0].set_xlabel(label_x[0])
     axs[0].set_ylabel(label_y[0])
-    
-    
+
+
     axs[1].plot(x[1], y[1])
     axs[1].title.set_text(subtitle[1])
     axs[1].set_xlabel(label_x[1])
@@ -238,13 +238,13 @@ def compare_plot(x, y, label_x, label_y,
         plt.savefig('visuals/' + filename + '.pdf')
     plt.legend()
     plt.show()
-    
- 
-    
+
+
+
 def coef_plot(deg, n, lam_lst):
-    reg.dataset_franke()
+    reg.dataset_franke(n)
     reg.design_matrix(deg)
-    
+
     ridge_coefs = []
     lasso_coefs = []
 
@@ -260,16 +260,16 @@ def coef_plot(deg, n, lam_lst):
     axs[0].plot(lam_lst[:18], ridge_coefs[:18])
     axs[1].plot(lam_lst[:10], lasso_coefs[:10])
     plt.show()
-    
-    
 
-    
+
+
+
 if __name__ == "__main__":
     n = 400; maxdeg = 10
     degrees = np.linspace(1,maxdeg,maxdeg)
-    
+
     lam_lst = np.logspace(-4,1,20)
-    
+
     #arrays for plotting error based on lambda
     lam_test_lasso = np.zeros(len(lam_lst))
     lam_train_lasso = np.zeros(len(lam_lst))
@@ -307,11 +307,11 @@ if __name__ == "__main__":
     deg_lam_error_lasso = np.zeros((maxdeg,len(lam_lst)))
     deg_lam_error_ridge = np.zeros((maxdeg,len(lam_lst)))
 
-    
+
 
     deg = 3
-    reg = Regression(n)
-    reg.dataset_franke()
+    reg = Regression()
+    reg.dataset_franke(n)
     print("max f: ", np.max(reg.f), "min f: ", np.min(reg.f))
     reg.design_matrix(deg)
     reg.split(reg.X, reg.f)
@@ -319,8 +319,8 @@ if __name__ == "__main__":
     print(np.mean( (reg.f_test - f_pred)**2 ))
 
 
-    reg = Regression(n)
-    reg.dataset_franke()
+    reg = Regression()
+    reg.dataset_franke(n)
     reg.design_matrix(deg)
     reg.split(reg.X, reg.f)
 
@@ -336,8 +336,8 @@ if __name__ == "__main__":
         lam_train_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
 
     lam_value = 0
-    reg = Regression(n)
-    reg.dataset_franke()
+    reg = Regression()
+    reg.dataset_franke(n)
     for i in range(maxdeg):
         deg = int(degrees[i])
         reg.design_matrix(deg)
@@ -378,8 +378,8 @@ if __name__ == "__main__":
     for k, lam_value in enumerate(lam_lst):
         for i in range(maxdeg):
             deg = int(degrees[i])
-            reg = Regression(n)
-            reg.dataset_franke()
+            reg = Regression()
+            reg.dataset_franke(n)
             reg.design_matrix(deg)
             reg.split(reg.X, reg.f)
 
@@ -399,12 +399,3 @@ if __name__ == "__main__":
     single_plot([degrees, degrees], [train_error, test_error], 'Complexity', 'Error', ['Train Error', 'Test Error'], 'OLS Error')
     compare_plot([degrees,degrees], [test_error_kfold, test_error_bootstrap], 'Complexity', 'Error', ['K-Fold', 'Bootstrap'], 'K-Fold VS Bootstrap', ['K-Fold Error', 'Bootstrap Error'])
     coef_plot(2, n, lam_lst)
-    
-    
-
-   
-
-
-
-
-

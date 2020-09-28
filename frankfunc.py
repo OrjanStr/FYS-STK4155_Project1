@@ -14,8 +14,6 @@ from sklearn.linear_model import Lasso
 from sklearn import linear_model
 
 class Regression():
-    def __init__(self, n):
-        self.n = n
 
     def franke_function(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -25,17 +23,17 @@ class Regression():
 
         return term1 + term2 + term3 + term4
 
-    def dataset_franke(self):
-        self.x = np.random.rand(self.n)
-        self.y = np.random.rand(self.n)
-        noise = 0.1*np.random.randn(self.n)
+    def dataset_franke(self,n):
+        self.x = np.random.rand(n)
+        self.y = np.random.rand(n)
+        noise = 0.1*np.random.randn(n)
         self.f = self.franke_function(self.x, self.y) + noise
         
         self.o2 = np.var(noise)
         
     def data_setup(self,x,y,z):
+        self.n = len(x)
         self.x ,self.y, self.f = x,y,z
-        
     
     def design_matrix(self, deg):
         # features

@@ -3,6 +3,7 @@ from imageio import imread
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+from frankfunk import Regression
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
@@ -26,3 +27,12 @@ plt.imshow(terrain1, cmap='gray')
 plt.xlabel('X')
 plt.ylabel('Y')
 plt.show()
+
+
+reg = Regression()
+reg.data_setup(x,y,z)
+reg.design_matrix(4)
+X_train, X_test, f_train , f_test = reg.split()
+f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
+
+heatmap(x, y, , "m", "m", "Terrain Data")

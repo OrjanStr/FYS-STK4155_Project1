@@ -1,4 +1,3 @@
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
@@ -26,12 +25,16 @@ class Regression():
 
         return term1 + term2 + term3 + term4
 
-    def dataset2D(self):
+    def dataset_franke(self):
         self.x = np.random.rand(self.n)
         self.y = np.random.rand(self.n)
         noise = 0.1*np.random.randn(self.n)
         self.f = self.franke_function(self.x, self.y) + noise
+        
         self.o2 = np.var(noise)
+        
+    def data_setup(self,x,y,z):
+        
 
     def design_matrix(self, deg):
         # features
@@ -240,7 +243,7 @@ def compare_plot(x, y, label_x, label_y,
  
     
 def coef_plot(deg, n, lam_lst):
-    reg.dataset2D()
+    reg.dataset_franke()
     reg.design_matrix(deg)
     
     ridge_coefs = []
@@ -265,16 +268,15 @@ def coef_plot(deg, n, lam_lst):
 if __name__ == "__main__":
     n = 400; maxdeg = 10
     degrees = np.linspace(1,maxdeg,maxdeg)
-
+    
     lam_lst = np.logspace(-4,1,20)
-
+    
+    #arrays for plotting error based on lambda
     lam_test_lasso = np.zeros(len(lam_lst))
     lam_train_lasso = np.zeros(len(lam_lst))
 
     lam_test_ridge = np.zeros(len(lam_lst))
     lam_train_ridge = np.zeros(len(lam_lst))
-
-
 
     #array for MSE
     mse_kfold = np.zeros(maxdeg)
@@ -300,15 +302,17 @@ if __name__ == "__main__":
     # Arrays for plotting Bias and Variance
     bias = np.zeros(maxdeg)
     variance = np.zeros(maxdeg)
+    strap_error = np.zeros(maxdeg)
 
+    #arrays for plotting heatmap
     deg_lam_error_lasso = np.zeros((maxdeg,len(lam_lst)))
     deg_lam_error_ridge = np.zeros((maxdeg,len(lam_lst)))
 
-    strap_error = np.zeros(maxdeg)
+    
 
     deg = 3
     reg = Regression(n)
-    reg.dataset2D()
+    reg.dataset_franke()
     print("max f: ", np.max(reg.f), "min f: ", np.min(reg.f))
     reg.design_matrix(deg)
     reg.split(reg.X, reg.f)
@@ -317,7 +321,7 @@ if __name__ == "__main__":
 
 
     reg = Regression(n)
-    reg.dataset2D()
+    reg.dataset_franke()
     reg.design_matrix(deg)
     reg.split(reg.X, reg.f)
 
@@ -332,9 +336,9 @@ if __name__ == "__main__":
         lam_test_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
         lam_train_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
 
-    lam_value = 0.001
+    lam_value = 0
     reg = Regression(n)
-    reg.dataset2D()
+    reg.dataset_franke()
     for i in range(maxdeg):
         deg = int(degrees[i])
         reg.design_matrix(deg)
@@ -346,7 +350,7 @@ if __name__ == "__main__":
         train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
     """
         # Bootstrap Method for Bias and Variance
-        f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+        f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.OLS ,lam = lam_value)
         f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
         strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
@@ -376,7 +380,7 @@ if __name__ == "__main__":
         for i in range(maxdeg):
             deg = int(degrees[i])
             reg = Regression(n)
-            reg.dataset2D()
+            reg.dataset_franke()
             reg.design_matrix(deg)
             reg.split(reg.X, reg.f)
 
@@ -396,5 +400,12 @@ if __name__ == "__main__":
     single_plot([degrees, degrees], [train_error, test_error], 'Complexity', 'Error', ['Train Error', 'Test Error'], 'OLS Error')
     compare_plot([degrees,degrees], [test_error_kfold, test_error_bootstrap], 'Complexity', 'Error', ['K-Fold', 'Bootstrap'], 'K-Fold VS Bootstrap', ['K-Fold Error', 'Bootstrap Error'])
     coef_plot(2, n, lam_lst)
+    
+    
+
+   
+
+
+
 
 

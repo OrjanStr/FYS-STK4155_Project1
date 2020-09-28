@@ -34,8 +34,9 @@ class Regression():
         self.o2 = np.var(noise)
         
     def data_setup(self,x,y,z):
+        self.x ,self.y, self.f = x,y,z
         
-
+    
     def design_matrix(self, deg):
         # features
         p = int(0.5*( (deg+1)*(deg+2) ))

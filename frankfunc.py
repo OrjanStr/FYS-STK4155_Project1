@@ -112,13 +112,18 @@ class Regression():
 
 
     def k_fold(self,X,k, method, lam = None):
-        # X = np.random.shuffle(X_train)
 
         #scaling data
         X[:,1:] -= np.mean(X[:,1:], axis=0)
         f = self.f - np.mean(self.f)
 
         #splitting data
+        
+        #removing some values if the array cannot be devided into k equal parts
+        number = (len(f)//k)
+        X = X[:(number*k),:]
+        f = f[:(number*k)]
+        
         X_lst1 = np.split(X,k)
         f_lst1 = np.split(f,k)
 

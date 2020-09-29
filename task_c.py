@@ -1,18 +1,7 @@
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-from random import random, seed
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn.utils import resample
-from sklearn.linear_model import Lasso
-from sklearn import linear_model
 from frankfunc import Regression
+from frankfunc import singleplot
 
 n = 400; maxdeg = 10
 trials = 100 # Bootstraps
@@ -47,3 +36,20 @@ plt.plot(degrees, MSE_test_bootstrap, label = 'Bootstrap MSE')
 plt.plot(degrees, MSE_test_CV, label = 'CV MSE')
 plt.legend()
 plt.show()
+
+n = 400; deg = 5
+folds = [5,6,7,8,9,10]
+    
+# Arrays for plotting Bias and Variance
+bias = np.zeros(len(folds))
+variance = np.zeros(len(folds))
+error = np.zeros(len(folds))
+
+
+reg = Regression()
+reg.dataset_franke(n)
+reg.design_matrix(deg)
+reg.split(reg.X, reg.f)
+for i, fold in enumerate(folds):
+    error[i]= reg.k_fold(reg.X,fold,reg.OLS,0)
+single_plot([folds], [error], 'folds', 'error', 'lab', 'title')

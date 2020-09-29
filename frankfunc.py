@@ -73,7 +73,7 @@ class Regression():
 
         return f_tilde, f_pred
 
-    def bootstrap(self, X_test, X_train, f_train, trials, method, lam):
+    def bootstrap(self, X_train, X_test, f_train, trials, method, lam):
         mse = np.zeros(trials)
 
         z_pred = np.zeros((self.f_test.shape[0], trials))
@@ -118,7 +118,7 @@ class Regression():
 
 
 
-    def k_fold(self,X,k,deg):
+    def k_fold(self,X,k,deg, method, lam):
         # X = np.random.shuffle(X_train)
 
         #scaling data
@@ -164,7 +164,7 @@ class Regression():
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)
 
-            f_tilde, z_pred = self.OLS(X_train,X_test,f_train)
+            f_tilde, z_pred = method(X_train,X_test,f_train,lam)
 
 
             # mse_score[i] = self.mse(f_test,f_pred)
@@ -186,14 +186,14 @@ class Regression():
         # print ('train_error',np.mean(train_err_arr))
         # print ('deg',deg,'score',error,'\n')
 
-        return error , np.mean(test_err_arr), np.mean(train_err_arr)
+        return np.mean(test_err_arr)
 
 
 
 def heatmap(x, y, z, label_x, label_y, title, save = False, filename = None):
 
     fig1, ax1 = plt.subplots()
-    cs = ax1.contourf(lam_lst, degrees, z, cmap ='Greens', extend ='both', alpha = 1)
+    cs = ax1.contourf(x, y, z, cmap ='Greens', extend ='both', alpha = 1)
     fig1.colorbar(cs)
     plt.ylabel(label_y)
     plt.xlabel(label_x)
@@ -265,137 +265,4 @@ def coef_plot(deg, n, lam_lst):
 
 
 if __name__ == "__main__":
-    n = 400; maxdeg = 10
-    degrees = np.linspace(1,maxdeg,maxdeg)
-
-    lam_lst = np.logspace(-4,1,20)
-
-    #arrays for plotting error based on lambda
-    lam_test_lasso = np.zeros(len(lam_lst))
-    lam_train_lasso = np.zeros(len(lam_lst))
-
-    lam_test_ridge = np.zeros(len(lam_lst))
-    lam_train_ridge = np.zeros(len(lam_lst))
-
-    #array for MSE
-    mse_kfold = np.zeros(maxdeg)
-    mse_bootstrap = np.zeros(maxdeg)
-    mse_lasso = np.zeros(maxdeg)
-
-    #creating array for train and test error
-    train_error = np.zeros(maxdeg)
-    test_error = np.zeros(maxdeg)
-
-    train_error_bootstrap = np.zeros(maxdeg)
-    test_error_bootstrap = np.zeros(maxdeg)
-
-    test_error_kfold = np.zeros(maxdeg)
-    train_error_kfold = np.zeros(maxdeg)
-
-    test_error_lasso = np.zeros(maxdeg)
-    train_error_lasso = np.zeros(maxdeg)
-
-    test_error_ridge = np.zeros(maxdeg)
-    train_error_ridge = np.zeros(maxdeg)
-
-    # Arrays for plotting Bias and Variance
-    bias = np.zeros(maxdeg)
-    variance = np.zeros(maxdeg)
-    strap_error = np.zeros(maxdeg)
-
-    #arrays for plotting heatmap
-    deg_lam_error_lasso = np.zeros((maxdeg,len(lam_lst)))
-    deg_lam_error_ridge = np.zeros((maxdeg,len(lam_lst)))
-
-
-
-    deg = 3
-    reg = Regression()
-    reg.dataset_franke(n)
-    print("max f: ", np.max(reg.f), "min f: ", np.min(reg.f))
-    reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
-    f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
-    print(np.mean( (reg.f_test - f_pred)**2 ))
-
-
-    reg = Regression()
-    reg.dataset_franke(n)
-    reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
-
-    for i, lam_value in enumerate(lam_lst):
-
-        #--ridge--
-        a, lam_test_ridge[i], lam_train_ridge[i] = reg.k_fold(reg.X,5,deg)
-
-        #--lasso--
-        f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
-
-        lam_test_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
-        lam_train_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
-
-    lam_value = 0
-    reg = Regression()
-    reg.dataset_franke(n)
-    for i in range(maxdeg):
-        deg = int(degrees[i])
-        reg.design_matrix(deg)
-        reg.split(reg.X, reg.f)
-        f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
-
-        # Train and Test Error
-        test_error[i] = np.mean( (f_pred - reg.f_test)**2 )
-        train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
-    """
-        # Bootstrap Method for Bias and Variance
-        f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.OLS ,lam = lam_value)
-        f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
-
-        strap_error[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
-        bias[i] = np.mean( (reg.f_test - f_hat)**2)
-        variance[i] = np.mean(np.var(f_strap, axis=1))
-
-        #reg.k_fold(reg.X,5,deg)
-
-        #--kfold--
-        mse_kfold[i], test_error_kfold[i], train_error_kfold[i] = reg.k_fold(reg.X,5,deg)
-
-        #--ridge--
-        f_tilde_ridge, f_pred_ridge = reg.ridge(reg.X_train, reg.X_test, reg.f_train, lam_value)
-
-        test_error_ridge[i] = np.mean( (f_pred_ridge - reg.f_test)**2 )
-        train_error_ridge[i] = np.mean( (f_tilde_ridge - reg.f_train)**2 )
-
-
-        #--lasso--
-        f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
-
-        test_error_lasso[i] = np.mean( (f_pred_lasso - reg.f_test)**2 )
-        train_error_lasso[i] = np.mean( (f_tilde_lasso - reg.f_train)**2 )
-    """
-    #for creating colormap plots
-    for k, lam_value in enumerate(lam_lst):
-        for i in range(maxdeg):
-            deg = int(degrees[i])
-            reg = Regression()
-            reg.dataset_franke(n)
-            reg.design_matrix(deg)
-            reg.split(reg.X, reg.f)
-
-            # Bootstrap Method for Bias and Variance
-            f_strap, mse = reg.bootstrap(reg.X_test, reg.X_train, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
-
-            deg_lam_error_ridge[i,k] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
-
-            #--lasso--
-            f_tilde_lasso , f_pred_lasso = reg.lasso(reg.X_train, reg.X_test, reg.f_train, lam_value)
-
-            deg_lam_error_lasso[i,k] =  np.mean( (f_pred_lasso - reg.f_test)**2 )
-
-    heatmap(lam_lst, degrees, deg_lam_error_ridge, "lambda", "complexity", "Ridge Error", save = True , filename = 'ridge_heatmap')
-    heatmap(lam_lst, degrees, deg_lam_error_lasso,"lambda", "complexity", "Lasso Error")
-    single_plot([degrees, degrees, degrees], [bias, variance, strap_error], 'complexity', 'error', ['Bias', 'Variance', 'Bootstrap Error'], 'Bias, Variance, Error')
-    single_plot([degrees, degrees], [train_error, test_error], 'Complexity', 'Error', ['Train Error', 'Test Error'], 'OLS Error')
-    compare_plot([degrees,degrees], [test_error_kfold, test_error_bootstrap], 'Complexity', 'Error', ['K-Fold', 'Bootstrap'], 'K-Fold VS Bootstrap', ['K-Fold Error', 'Bootstrap Error'])
-    coef_plot(2, n, lam_lst)
+    1+1

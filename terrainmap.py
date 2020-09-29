@@ -36,16 +36,22 @@ maxdeg = 20
 reg = Regression()
 reg.data_setup(x,y,z)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
-train_error = np.zeros(maxdeg)
-test_error  = np.zeros(maxdeg)
+
+# OLS arrays
+train_error_OLS = np.zeros(maxdeg)
+test_errorOLS  = np.zeros(maxdeg)
 
 for i in range(maxdeg):
     deg = degrees[i]
     reg.design_matrix(deg)
     X_train, X_test, f_train , f_test = reg.split(reg.X, reg.f)
     f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
-    train_error[i] = np.mean( (f_tilde - f_train)**2 )
-    test_error[i] = np.mean( (f_pred - f_test)**2 )
+    train_error_OLS[i] = np.mean( (f_tilde - f_train)**2 )
+    test_error_OLS[i] = np.mean( (f_pred - f_test)**2 )
+
+
+
+
 
 plt.plot(degrees, train_error, label = 'Train error')
 plt.plot(degrees, test_error, label = 'Test error')

@@ -118,7 +118,7 @@ class Regression():
 
 
 
-    def k_fold(self,X,k,deg, method, lam):
+    def k_fold(self,X,k,deg, method, lam = None):
         # X = np.random.shuffle(X_train)
 
         #scaling data
@@ -155,7 +155,6 @@ class Regression():
             f_train_lst = []
             X_train_lst = []
 
-            # do this in the other loop?
             for k in range(len(X_train)):
                 for j in range(len(X_train[k])):
                     f_train_lst.append(f_train[k][j])
@@ -164,27 +163,14 @@ class Regression():
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)
 
-            f_tilde, z_pred = method(X_train,X_test,f_train,lam)
+            f_tilde, z_pred = method(X_train,X_test,f_train, lam = lam)
 
 
-            # mse_score[i] = self.mse(f_test,f_pred)
-            mse_score[i] = self.MSE(f_test,z_pred)
-
-
-            # bias[i] = np.mean((f_test - np.mean(z_pred))**2)
             average_model = np.mean(z_pred)
 
             test_err_arr[i] = np.mean( (z_pred - f_test)**2 )
             train_err_arr[i] = np.mean( (f_tilde - f_train)**2 )
 
-
-
-
-        error = np.mean(mse_score)
-
-        # print ('test_error', np.mean(test_err_arr))
-        # print ('train_error',np.mean(train_err_arr))
-        # print ('deg',deg,'score',error,'\n')
 
         return np.mean(test_err_arr)
 

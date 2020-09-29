@@ -1,17 +1,10 @@
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-from random import random, seed
+from random import seed
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
-from sklearn import linear_model
+
 
 class Regression():
 
@@ -132,7 +125,6 @@ class Regression():
         X_lst = []
         f_lst = []
 
-        mse_score = np.zeros(k)
         test_err_arr = np.zeros(k)
         train_err_arr = np.zeros(k)
 
@@ -164,9 +156,6 @@ class Regression():
             X_train = np.array(X_train_lst)
 
             f_tilde, z_pred = method(X_train,X_test,f_train, lam = lam)
-
-
-            average_model = np.mean(z_pred)
 
             test_err_arr[i] = np.mean( (z_pred - f_test)**2 )
             train_err_arr[i] = np.mean( (f_tilde - f_train)**2 )
@@ -209,13 +198,13 @@ def compare_plot(x, y, label_x, label_y,
     fig, axs = plt.subplots(2)
     fig.suptitle(title)
 
-    axs[0].plot(x[0], y[0])
+    axs[0].plot(x[0], y[0], label = graph_label[0])
     axs[0].title.set_text(subtitle[0])
     axs[0].set_xlabel(label_x[0])
     axs[0].set_ylabel(label_y[0])
 
 
-    axs[1].plot(x[1], y[1])
+    axs[1].plot(x[1], y[1], label = graph_label[1])
     axs[1].title.set_text(subtitle[1])
     axs[1].set_xlabel(label_x[1])
     axs[1].set_ylabel(label_y[1])
@@ -228,6 +217,7 @@ def compare_plot(x, y, label_x, label_y,
 
 
 def coef_plot(deg, n, lam_lst):
+    reg = Regression()
     reg.dataset_franke(n)
     reg.design_matrix(deg)
 
@@ -246,9 +236,3 @@ def coef_plot(deg, n, lam_lst):
     axs[0].plot(lam_lst[:18], ridge_coefs[:18])
     axs[1].plot(lam_lst[:10], lasso_coefs[:10])
     plt.show()
-
-
-
-
-if __name__ == "__main__":
-    1+1

@@ -41,7 +41,7 @@ for i in range(maxdeg):
     MSE_test_bootstrap[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
 
     # Cross-Validation
-    MSE_test_CV[i] = reg.k_fold(reg.X,5,deg, reg.OLS)
+    MSE_test_CV[i] = reg.k_fold(reg.X,5, reg.OLS, lam=0)
 
 plt.plot(degrees, MSE_test_bootstrap, label = 'Bootstrap MSE')
 plt.plot(degrees, MSE_test_CV, label = 'CV MSE')

@@ -3,9 +3,10 @@ from imageio import imread
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from frankfunc import Regression
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
+from frankfunc import Regression
+from task1 import task_a
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
@@ -34,14 +35,20 @@ plt.xlabel('X')
 plt.ylabel('Y')
 plt.show()
 
+# Looking at MSE and R2 for terraindata
+task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
+
 maxdeg = 20
 reg = Regression()
 reg.data_setup(x,y,z)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
 
-# OLS arrays
+# OLS arrays ---------
 train_error_OLS = np.zeros(maxdeg)
 test_errorOLS  = np.zeros(maxdeg)
+# MSE, Bias and Variance
+bias_OLS = np.zeros(maxdeg)
+bias_OLS = np.zeros(maxdeg)
 
 for i in range(maxdeg):
     deg = degrees[i]
@@ -50,6 +57,7 @@ for i in range(maxdeg):
     f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
     train_error_OLS[i] = np.mean( (f_tilde - f_train)**2 )
     test_error_OLS[i] = np.mean( (f_pred - f_test)**2 )
+
 
 
 

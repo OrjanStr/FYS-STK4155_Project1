@@ -67,7 +67,7 @@ class Regression():
 
 
         beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ f_train
-
+        self.beta_OLS = beta # Store this beta in class (for confidence interval)
         f_tilde = X_train @ beta
         f_pred = X_test @ beta
 
@@ -118,7 +118,7 @@ class Regression():
 
 
 
-    def k_fold(self,X,k,deg, method, lam = None):
+    def k_fold(self,X,k, method, lam = None):
         # X = np.random.shuffle(X_train)
 
         #scaling data

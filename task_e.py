@@ -46,7 +46,7 @@ for k, lam_value in enumerate(lam_lst):
         variance[i,k] = np.mean(np.var(f_strap, axis=1))
 
         # Cross validation for MSE
-        CV_error[i,k] = reg.k_fold(reg.X, 5, deg, reg.lasso, lam_value)
+        CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
 
 heatmap(lam_lst, degrees, CV_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Cross-Validation')
 heatmap(lam_lst, degrees, strap_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Bootstrap')

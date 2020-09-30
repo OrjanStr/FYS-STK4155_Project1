@@ -46,6 +46,7 @@ class Regression():
             X[:,1:] -= np.mean(X[:,1:], axis=0)
             f -= np.mean(f)
         # Splitting Data
+        np.random.seed(42)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
         return self.X_train, self.X_test, self.f_train, self.f_test
 
@@ -108,9 +109,6 @@ class Regression():
         return f_tilde, f_pred
 
 
-
-
-
     def k_fold(self,X,k, method, lam = None):
 
         #scaling data
@@ -118,12 +116,12 @@ class Regression():
         f = self.f - np.mean(self.f)
 
         #splitting data
-        
+
         #removing some values if the array cannot be devided into k equal parts
         number = (len(f)//k)
         X = X[:(number*k),:]
         f = f[:(number*k)]
-        
+
         X_lst1 = np.split(X,k)
         f_lst1 = np.split(f,k)
 

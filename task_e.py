@@ -17,7 +17,7 @@ from frankfunc import Regression
 from frankfunc import heatmap
 
 n=400; maxdeg=10; trials=100;
-lam_lst = np.logspace(-4,-3,20)
+lam_lst = np.logspace(-8,-3,20)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
 
 # Arrays for plotting MSE, Bias and Variance (bootstrap)
@@ -47,6 +47,7 @@ for k, lam_value in enumerate(lam_lst):
 
         # Cross validation for MSE
         CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
+
 
 heatmap(lam_lst, degrees, CV_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Cross-Validation')
 heatmap(lam_lst, degrees, strap_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Bootstrap')

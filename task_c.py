@@ -37,7 +37,7 @@ def task_c(x=None, y=None, z=None, data=False):
         MSE_test_CV[i] = reg.k_fold(reg.X,5, reg.OLS, lam=0)
 
     plt.plot(degrees, MSE_test_bootstrap, label = 'Bootstrap MSE')
-    plt.plot(degrees, MSE_test_CV, label = 'CV MSE')
+    #plt.plot(degrees, MSE_test_CV, label = 'CV MSE')
     plt.legend()
     plt.show()
 

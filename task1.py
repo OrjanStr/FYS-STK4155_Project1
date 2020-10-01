@@ -15,7 +15,7 @@ from sklearn.linear_model import Lasso
 from sklearn import linear_model
 from frankfunc import Regression
 
-def task_a(x_set=None,y_set=None,z_set=None, generate=False):
+def task_a(x_set=None,y_set=None,z_set=None, data=False):
     n = 400; deg = 3
 
     def R_squared(y,y_tilde):
@@ -31,10 +31,10 @@ def task_a(x_set=None,y_set=None,z_set=None, generate=False):
     # Initializing Regression class
     reg = Regression()
     # Checking if we need to generate our own dataset
-    if generate:
-        reg.dataset_franke(n)
-    else:
+    if data:
         reg.data_setup(x_set,y_set,z_set)
+    else:
+        reg.dataset_franke(n)
 
     # Looping through complexities
     for i in range(5):
@@ -49,16 +49,37 @@ def task_a(x_set=None,y_set=None,z_set=None, generate=False):
         R2[i] = R_squared(reg.f_test, f_pred)
 
         # Confidence interval
-        if generate:
-            o2 = reg.o2
+        if data:
+            o2 = 1 # Assume variance of noise is 1 when noise is unknown
         else:
-            o2 = 1 # Assume variance of noise is 1 when nosie is unknown
+            o2 = reg.o2
 
-        confidence = reg.beta_confidence(reg.beta_OLS, o2, reg.X_train,n)
+        if deg == 5: # Pick out the beta variance in complexity 5
+            p = reg.X_train.shape[1] # Number of features
+            print(p)
+            betas = reg.beta_OLS
+            beta_variance = reg.beta_confidence(reg.beta_OLS, o2, reg.X_train,n)
 
-    plt.plot(degrees, MSE, label = 'MSE')
-    plt.plot(degrees, R2, label = 'R2')
-    plt.legend()
+    # Plotting betas with confidence intervals for complexity 5
+    features = np.linspace(0,p-1,p, dtype=int)
+    plt.style.use('seaborn-whitegrid')
+    plt.errorbar(features, betas,  yerr=beta_variance, fmt=".k", capsize=3)
+    plt.xticks(features, my_xticks, fontsize='12')
+    plt.yticks(fontsize='12')
+    plt.title("Beta Variance OLS | Complexity  = 5", fontsize = '16')
+    plt.xlabel("Features",fontsize = '16')
+    plt.ylabel(r"$\beta$",fontsize = '16')
     plt.show()
+
+    # Plotting MSE and R2 score as function of complexity
+    plt.plot(degrees, MSE, label = 'MSE', linewidth=3)
+    plt.plot(degrees, R2, label = 'R2', linewidth=3)
+    plt.title("MSE and R2 score for OLS", fontsize = '16')
+    plt.tick_params(labelsize='12')
+    plt.xlabel("Complexity", fontsize = '16')
+    plt.ylabel("Score", fontsize = '16')
+    plt.legend(fontsize='12', loc=7)
+    plt.show()
+
 if __name__ == "__main__":
     task_a()

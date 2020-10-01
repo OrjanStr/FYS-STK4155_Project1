@@ -46,7 +46,7 @@ ax.set_ylabel('m')
 ax.set_aspect(1 / np.cos(np.deg2rad(20)))
 fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
 plt.show()
-
+"""
 
 
 spacing = 1000
@@ -67,11 +67,13 @@ plt.show()
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
 #task_b(x, y, z, data = True)
 #task_c(x, y, z, data = True)
-task_d(x, y, z, data = True)
+lam_lst = np.logspace(-15,-8,20)
+maxdeg = 15
+task_d(maxdeg, lam_lst, x, y, z, data = True)
 #task_e(x, y, z, data = True)
 
 """
-maxdeg = 10
+maxdeg = 30
 reg = Regression()
 reg.data_setup(x,y,z)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
@@ -105,5 +107,4 @@ x_plot= np.linspace(0, x[-1], 24)
 y_plot= np.linspace(0,y[-1], 54)
 f_plot = np.reshape(f_pred[:1296], (54,24))
 heatmap(x_plot, y_plot, f_plot, "m", "m", "Terrain Data")
-
 """

@@ -36,7 +36,7 @@ colours_land = plt.cm.terrain(np.linspace(0.25, 1, 256))
 all_colours = np.vstack((colours_sea, colours_land))
 terrain_map = colors.LinearSegmentedColormap.from_list('terrain_map',
     all_colours)
-
+"""
 offset = colors.TwoSlopeNorm(vmin=20, vcenter=80, vmax=600)
 
 pcm = ax.pcolormesh(x, y, terrain1, norm = offset,  rasterized=True,
@@ -47,8 +47,7 @@ ax.set_aspect(1 / np.cos(np.deg2rad(20)))
 fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
 plt.show()
 """
-
-
+# Converting Terraindata for calculations
 spacing = 1000
 # Raveling nata to get into shape (x_dim*y_dim,)
 z = terrain1.ravel()[::spacing]
@@ -65,11 +64,12 @@ plt.show()
 
 # Looking at MSE and R2 for terraindata
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-#task_b(x, y, z, data = True)
+maxdeg = 20
+task_b(maxdeg, x, y, z, data = True)
 #task_c(x, y, z, data = True)
 lam_lst = np.logspace(-15,-8,20)
 maxdeg = 15
-task_d(maxdeg, lam_lst, x, y, z, data = True)
+#task_d(maxdeg, lam_lst, x, y, z, data = True)
 #task_e(x, y, z, data = True)
 
 """

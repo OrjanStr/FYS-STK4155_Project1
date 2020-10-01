@@ -60,6 +60,8 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
             betas = reg.beta_OLS
             beta_variance = reg.beta_confidence(reg.beta_OLS, o2, reg.X_train,n)
 
+    my_xticks = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+    '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', ] # Labels for beta-indexes
     # Plotting betas with confidence intervals for complexity 5
     features = np.linspace(0,p-1,p, dtype=int)
     plt.style.use('seaborn-whitegrid')

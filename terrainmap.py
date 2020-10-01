@@ -5,12 +5,18 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
-from frankfunc import Regression
+from frankfunc import Regression, heatmap
+import matplotlib.cbook as cbook
+import matplotlib.colors as colors
+
 from task1 import task_a
 from task_b import task_b
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
+terrain2 = np.asarray(terrain1)
+
+print(terrain1.shape)
 
 resolution = 30 # Meters (according to website)
 y_dim, x_dim = len(terrain1[:,0]), len(terrain1[0])
@@ -19,6 +25,26 @@ y_dim, x_dim = len(terrain1[:,0]), len(terrain1[0])
 x = np.linspace(0, x_dim-1, x_dim)*resolution
 y = np.linspace(0, y_dim-1, y_dim)*resolution
 x, y = np.meshgrid(x,y) # Using every 50th element
+
+
+fig, ax = plt.subplots(constrained_layout=True)
+colours_sea = plt.cm.terrain(np.linspace(0, 0.17, 256))
+colours_land = plt.cm.terrain(np.linspace(0.25, 1, 256))
+all_colours = np.vstack((colours_sea, colours_land))
+terrain_map = colors.LinearSegmentedColormap.from_list('terrain_map',
+    all_colours)
+
+offset = colors.TwoSlopeNorm(vmin=30, vcenter=120, vmax=600)
+
+pcm = ax.pcolormesh(x, y, terrain1, norm = offset,  rasterized=True,
+    cmap=terrain_map)
+ax.set_xlabel('m')
+ax.set_ylabel('m')
+ax.set_aspect(1 / np.cos(np.deg2rad(49)))
+fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
+plt.show()
+
+
 
 spacing = 1000
 # Raveling nata to get into shape (x_dim*y_dim,)
@@ -67,4 +93,12 @@ plt.legend()
 plt.savefig("visuals/terrainplot.pdf")
 plt.show()
 
-heatmap(x, y, z, "m", "m", "Terrain Data")
+
+print ('shape f_pred: ' ,f_pred.shape, 'y shape: ', y.shape)
+
+x_plot= np.linspace(0, x[-1], 24)
+y_plot= np.linspace(0,y[-1], 54)
+f_plot = np.reshape(f_pred[:1296], (54,24))
+heatmap(x_plot, y_plot, f_plot, "m", "m", "Terrain Data")
+
+

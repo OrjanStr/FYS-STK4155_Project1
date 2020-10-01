@@ -4,6 +4,8 @@ from random import seed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
+import seaborn as sb
+import pandas as pd
 
 
 class Regression():
@@ -168,14 +170,16 @@ class Regression():
 
 
 
-def heatmap(x, y, z, label_x, label_y, title, save = False, filename = None):
+def heatmap(data, label_x, title, label_y,ticks, save = False, filename = None):
+    
+    ax = sb.heatmap(data, cmap='coolwarm',
+               square = True, xticklabels = ticks,)
 
-    fig1, ax1 = plt.subplots()
-    cs = ax1.contourf(x, y, z, cmap ='Greens', extend ='both', alpha = 1)
-    fig1.colorbar(cs)
-    plt.ylabel(label_y)
-    plt.xlabel(label_x)
-    ax1.set_title(title)
+
+    plt.xlabel(r'$\lambda$')
+    plt.ylabel('Compexity')
+    plt.title(title)
+    plt.yticks 
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()

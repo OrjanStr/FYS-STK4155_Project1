@@ -170,16 +170,16 @@ class Regression():
 
 
 
-def heatmap(data, label_x, title, label_y,ticks=None, save = False, filename = None):
-
+def heatmap(data, label_x, label_y, title, ticks=None, save = False, filename = None):
     ax = sb.heatmap(data, cmap='coolwarm',
                square = True, xticklabels = ticks,)
 
 
-    plt.xlabel(r'$\lambda$')
-    plt.ylabel('Compexity')
-    plt.title(title)
-    plt.yticks
+    plt.xlabel(r'$\lambda$', fontsize='16')
+    plt.ylabel('Complexity', fontsize='16')
+    plt.title(title, fontsize='16')
+    plt.tick_params(labelsize='12')
+    
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()

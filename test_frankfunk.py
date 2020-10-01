@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
-
-"""
-r2 mse ols ridge 
-"""
-
 from frankfunc import Regression
 import unittest
 

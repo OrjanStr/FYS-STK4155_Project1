@@ -9,7 +9,7 @@ from frankfunc import Regression, heatmap
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
 
-from task1 import task_a
+from task_a import task_a
 from task_b import task_b
 from task_c import task_c
 from task_d import task_d

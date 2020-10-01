@@ -49,17 +49,5 @@ def task_c(x=None, y=None, z=None, data=False):
     variance = np.zeros(len(folds))
     error = np.zeros(len(folds))
 
-
-    reg = Regression()
-    if data:
-        reg.data_setup(x,y,z)
-    else:
-        reg.dataset_franke(n)
-    reg.design_matrix(deg)
-    reg.split(reg.X, reg.f)
-    for i, fold in enumerate(folds):
-        error[i]= reg.k_fold(reg.X,fold,reg.OLS,0)
-    single_plot([folds], [error], 'folds', 'error', ' ', 'title')
-
 if __name__ == "__main__":
     task_c()

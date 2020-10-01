@@ -36,14 +36,14 @@ colours_land = plt.cm.terrain(np.linspace(0.25, 1, 256))
 all_colours = np.vstack((colours_sea, colours_land))
 terrain_map = colors.LinearSegmentedColormap.from_list('terrain_map',
     all_colours)
-"""
-offset = colors.TwoSlopeNorm(vmin=30, vcenter=120, vmax=600)
+
+offset = colors.TwoSlopeNorm(vmin=20, vcenter=80, vmax=600)
 
 pcm = ax.pcolormesh(x, y, terrain1, norm = offset,  rasterized=True,
-    cmap=terrain_map)
+    cmap=terrain_map, shading= 'auto')
 ax.set_xlabel('m')
 ax.set_ylabel('m')
-ax.set_aspect(1 / np.cos(np.deg2rad(49)))
+ax.set_aspect(1 / np.cos(np.deg2rad(20)))
 fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
 plt.show()
 """

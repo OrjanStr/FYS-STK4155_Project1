@@ -9,6 +9,8 @@ verify_ssl = true
 matplotlib = "*"
 numpy = "*"
 sklearn = "*"
+seaborn = "*"
+imageio = "*"
 
 [requires]
 python_version = "3.8"

@@ -72,8 +72,8 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
     plt.show()
 
     # Plotting MSE and R2 score as function of complexity
-    plt.plot(degrees, MSE, label = 'MSE', linewidth=3)
-    plt.plot(degrees, R2, label = 'R2', linewidth=3)
+    plt.plot(degrees, MSE, label = 'MSE')
+    plt.plot(degrees, R2, label = 'R2')
     plt.title("MSE and R2 score for OLS", fontsize = '16')
     plt.tick_params(labelsize='12')
     plt.xlabel("Complexity", fontsize = '16')

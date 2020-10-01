@@ -186,14 +186,16 @@ def heatmap(data, label_x, title, label_y,ticks=None, save = False, filename = N
 
 def single_plot(x,y, label_x, label_y, func_label, title, save = False, filename = None):
 
+    plt.style.use('seaborn-whitegrid')
     plt.title(title, fontsize='16')
 
     for i in range(len(x)):
-        plt.plot(x[i], y[i], label = func_label[i], linewidth='3')
+        plt.plot(x[i], y[i], label = func_label[i])
 
     plt.xlabel(label_x, fontsize='16')
     plt.ylabel(label_y, fontsize='16')
-    plt.legend()
+    plt.tick_params(labelsize='12')
+    plt.legend(fontsize='12')
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()

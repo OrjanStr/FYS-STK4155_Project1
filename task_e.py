@@ -17,7 +17,7 @@ from frankfunc import Regression
 from frankfunc import heatmap
 
 n=400; maxdeg=10; trials=100;
-lam_lst = np.logspace(-8,-3,20)
+lam_lst = np.logspace(-15,-8,20)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
 
 # Arrays for plotting MSE, Bias and Variance (bootstrap)

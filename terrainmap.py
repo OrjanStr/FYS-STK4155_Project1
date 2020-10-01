@@ -5,28 +5,32 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
+
+# Import from previous code
 from frankfunc import Regression
-from task1 import task_a
+from task1  import task_a
 from task_b import task_b
+from task_c import task_c
+from task_d import task_d
+#from task_e import task_e
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
 
-resolution = 30 # Meters (according to website)
+resolution = 10 # Meters (according to website)
 y_dim, x_dim = len(terrain1[:,0]), len(terrain1[0])
 
 # Setting up x and y arrays
 x = np.linspace(0, x_dim-1, x_dim)*resolution
 y = np.linspace(0, y_dim-1, y_dim)*resolution
-x, y = np.meshgrid(x,y) # Using every 50th element
+x, y = np.meshgrid(x,y)
 
 spacing = 1000
 # Raveling nata to get into shape (x_dim*y_dim,)
-z = terrain1.ravel()[::spacing] # Using every 50th element
+z = terrain1.ravel()[::spacing]
 z = z.astype("float64") # Converting to float
 x = x.ravel()[::spacing]
 y = y.ravel()[::spacing]
-
 
 plt.figure()
 plt.title('Terrain over Norway')
@@ -36,9 +40,13 @@ plt.ylabel('Y')
 plt.show()
 
 # Looking at MSE and R2 for terraindata
-task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-task_b(x, y, z, data = True)
+#task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
+#task_b(x, y, z, data = True)
+#task_c(x, y, z, data = True)
+task_d(x, y, z, data = True)
+#task_e(x, y, z, data = True)
 
+"""
 maxdeg = 10
 reg = Regression()
 reg.data_setup(x,y,z)
@@ -60,7 +68,6 @@ for i in range(maxdeg):
     train_error_OLS[i] = np.mean( (f_tilde - f_train)**2 )
     test_error_OLS[i] = np.mean( (f_pred - f_test)**2 )
 
-
 plt.plot(degrees, train_error_OLS, label = 'Train error')
 plt.plot(degrees, test_error_OLS, label = 'Test error')
 plt.legend()
@@ -68,3 +75,4 @@ plt.savefig("visuals/terrainplot.pdf")
 plt.show()
 
 heatmap(x, y, z, "m", "m", "Terrain Data")
+"""

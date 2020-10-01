@@ -1,18 +1,6 @@
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-from random import random, seed
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn.utils import resample
-from sklearn.linear_model import Lasso
-from sklearn import linear_model
+from random import seed
 from frankfunc import Regression
 
 def task_a(x_set=None,y_set=None,z_set=None, data=False):

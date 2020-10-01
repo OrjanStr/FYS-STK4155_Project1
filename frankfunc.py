@@ -88,7 +88,7 @@ class Regression():
         self.confidence = np.zeros((var_beta.shape[0], 2))
         self.confidence[:,0] = beta - 1.96 * 1/np.sqrt(n) * var_beta
         self.confidence[:,1] = beta + 1.96 * 1/np.sqrt(n) * var_beta
-        return self.confidence
+        return var_beta
 
     def ridge(self, X_train, X_test, f_train, lam):
         beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
@@ -170,8 +170,8 @@ class Regression():
 
 
 
-def heatmap(data, label_x, title, label_y,ticks, save = False, filename = None):
-    
+def heatmap(data, label_x, title, label_y,ticks=None, save = False, filename = None):
+
     ax = sb.heatmap(data, cmap='coolwarm',
                square = True, xticklabels = ticks,)
 
@@ -179,20 +179,20 @@ def heatmap(data, label_x, title, label_y,ticks, save = False, filename = None):
     plt.xlabel(r'$\lambda$')
     plt.ylabel('Compexity')
     plt.title(title)
-    plt.yticks 
+    plt.yticks
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()
 
 def single_plot(x,y, label_x, label_y, func_label, title, save = False, filename = None):
 
-    plt.title(title)
+    plt.title(title, fontsize='16')
 
     for i in range(len(x)):
-        plt.plot(x[i], y[i], label = func_label[i])
+        plt.plot(x[i], y[i], label = func_label[i], linewidth='3')
 
-    plt.xlabel(label_x)
-    plt.ylabel(label_y)
+    plt.xlabel(label_x, fontsize='16')
+    plt.ylabel(label_y, fontsize='16')
     plt.legend()
     if save:
         plt.savefig('visuals/' + filename + '.pdf')

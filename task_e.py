@@ -16,6 +16,7 @@ from sklearn import linear_model
 from frankfunc import Regression
 from frankfunc import heatmap
 
+
 n=400; maxdeg=10; trials=100;
 lam_lst = np.logspace(-15,-8,20)
 degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
@@ -35,7 +36,7 @@ for k, lam_value in enumerate(lam_lst):
     for i in range(maxdeg):
         deg = degrees[i]
         reg.design_matrix(deg)
-        reg.split(reg.X, reg.f)
+        reg.split(reg.X, reg.f, scale=False)
 
         # Bootstrap for MSE, Bias and Variance
         f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.lasso, lam_value)

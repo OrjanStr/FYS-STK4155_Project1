@@ -228,7 +228,8 @@ def compare_plot(x, y, label_x, label_y,
 def coef_plot(deg, n, lam_lst):
     reg = Regression()
     reg.dataset_franke(n)
-    reg.design_matrix(deg)
+    X = reg.design_matrix(deg)
+    reg.split(X, reg.f)
 
     ridge_coefs = []
     lasso_coefs = []
@@ -245,3 +246,7 @@ def coef_plot(deg, n, lam_lst):
     axs[0].plot(lam_lst[:18], ridge_coefs[:18])
     axs[1].plot(lam_lst[:10], lasso_coefs[:10])
     plt.show()
+
+
+lam_lst = np.logspace(-4,-1.5,20)
+coef_plot(3,400,lam_lst)

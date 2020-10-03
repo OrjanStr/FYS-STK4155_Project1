@@ -179,7 +179,7 @@ def heatmap(data, label_x, label_y, title, ticks=None, save = False, filename = 
     plt.ylabel('Complexity', fontsize='16')
     plt.title(title, fontsize='16')
     plt.tick_params(labelsize='12')
-    
+
     if save:
         plt.savefig('visuals/' + filename + '.pdf')
     plt.show()

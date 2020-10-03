@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from frankfunc import Regression, heatmap, single_plot
 import seaborn as sns
-
+from frankfunc import coef_plot
 
 """
 plotting heatmap for bootstrap and kfold, and bias variance with ridge
@@ -48,6 +48,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
 
     deg = 8 # Finding bias and variance dependency on lambda for degree 8
     for k, lam_value in enumerate(lam_lst):
+        
         # Bootstrap resampling
         f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
         f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
@@ -69,3 +70,6 @@ if __name__ == "__main__":
     lam_lst = np.logspace(-15,-8,20)
     maxdeg = 10
     task_d(maxdeg, lam_lst)
+    
+    lam_lst = np.logspace(-4,-1.5,20)
+    coef_plot(3,400,lam_lst)

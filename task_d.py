@@ -59,12 +59,14 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
         variance[k] = np.mean(np.var(f_strap, axis=1))
 
     # Plotting MSE for lambda and complexity
-    heatmap(deg_lam_error_bootstrap, "lambda[log]", "complexity", "Bootstrap Error", ticks =  plot_label, save = True , filename = 'bootstrap_heatmap')
-    heatmap(deg_lam_error_kfold, "lambda[log]", "complexity", "K-fold Error", ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
+    boot_title = "Ridge MSE: Bootstrap"
+    kfold_title = "Ridge MSE: K-fold"
+    heatmap(deg_lam_error_bootstrap, "lambda[log]", "complexity", boot_title, ticks =  plot_label, save = True , filename = 'bootstrap_heatmap')
+    heatmap(deg_lam_error_kfold, "lambda[log]", "complexity",  kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
     single_plot([lam_lst, lam_lst], [bias, variance], r'$\lambda$', 'Error',
-                 ['Bias','Variance'], 'lambda_bias_variance (deg =: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
+                 ['Bias','Variance'], 'lambda_bias_variance (deg: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
 
 if __name__ == "__main__":
     lam_lst = np.logspace(-15,-8,20)

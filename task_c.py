@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from frankfunc import Regression
-from frankfunc import single_plot
+from linear_regression import Regression
+from linear_regression import Visuals
+
 
 def task_c(maxdeg, x=None, y=None, z=None, data=False):
     n = 400;
@@ -35,7 +36,8 @@ def task_c(maxdeg, x=None, y=None, z=None, data=False):
         MSE_test_CV[i] = reg.k_fold(reg.X,5, reg.OLS, lam=0)
 
     # Plotting the two MSEs
-    single_plot((degrees, degrees), (MSE_test_bootstrap, MSE_test_CV), 'Complexity', 'MSE', ('Bootstrap', 'K-fold'),
+    vs= Visuals()
+    vs.single_plot((degrees, degrees), (MSE_test_bootstrap, MSE_test_CV), 'Complexity', 'MSE', ('Bootstrap', 'K-fold'),
     'Bootstrap MSE vs. K-fold MSE for OLS', save = False, filename = None)
 
 if __name__ == "__main__":

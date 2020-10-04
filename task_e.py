@@ -1,7 +1,7 @@
 from random import seed
 import numpy as np
-from frankfunc import Regression
-from frankfunc import heatmap
+from linear_regression import Regression, Visuals
+
 
 def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
     n=400; maxdeg=maxdeg; trials=trials
@@ -38,11 +38,11 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
             # Cross validation for MSE
             CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
     
-    
-    heatmap(lam_lst, degrees, CV_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Cross-Validation')
-    heatmap(lam_lst, degrees, strap_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Bootstrap')
-    heatmap(lam_lst, degrees, bias, r'$\lambda$', 'Complexity', 'Lasso Bias')
-    heatmap(lam_lst, degrees, variance, r'$\lambda$', 'Complexity', 'Lasso Variance')
+    vs = Visuals()
+    vs.heatmap(CV_error, 'Lasso MSE - Cross-Validation', save = True, filename = 'LassoMSE_CV')
+    vs.heatmap(strap_error, 'Lasso MSE - Bootstrap', save = True, filename = 'LassoMSE_Bootstrap')
+    vs.heatmap(bias, 'Lasso Bias', save = True, filename = 'Lasso_bias')
+    vs.heatmap(variance, 'Lasso Variance', save = True, filename = 'Lasso_variance')
 
 if __name__ == "__main__":
     task_e(10,np.logspace(-15,-8,20),100)

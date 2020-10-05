@@ -177,10 +177,10 @@ class Regression():
             f_train_lst = []
             X_train_lst = []
 
-            for i in range(len(X_train)):
-                for j in range(len(X_train[i])):
-                    f_train_lst.append(f_train[i][j])
-                    X_train_lst.append(X_train[i][j])
+            for j in range(len(X_train)):
+                for k in range(len(X_train[j])):
+                    f_train_lst.append(f_train[j][k])
+                    X_train_lst.append(X_train[j][k])
 
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)

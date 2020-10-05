@@ -46,9 +46,9 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
             # Calculate k-fold MSE and assign for plot array
             deg_lam_error_kfold[i,k]= reg.k_fold(reg.X,5,reg.ridge,lam_value)
 
-    deg = 8 # Finding bias and variance dependency on lambda for degree 8
+    deg = 10 # Finding bias and variance dependency on lambda for degree 8
     for k, lam_value in enumerate(lam_lst):
-        
+
         # Bootstrap resampling
         f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
         f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
@@ -72,6 +72,6 @@ if __name__ == "__main__":
     lam_lst = np.logspace(-15,-8,20)
     maxdeg = 10
     task_d(maxdeg, lam_lst)
-    
+
     lam_lst = np.logspace(-4,-1.5,20)
     coef_plot(3,400,lam_lst)

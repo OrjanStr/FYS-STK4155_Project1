@@ -1,6 +1,5 @@
 import numpy as np
-from frankfunc import Regression
-from frankfunc import single_plot
+from linear_regression import Regression
 
 """
 using OLS and bootstrap to produce Training error, Test error plot
@@ -50,12 +49,12 @@ def task_b(maxdeg, x = None , y = None , z = None, data = False):
         bias[i] = np.mean( (reg.f_test - f_hat)**2)
         variance[i] = np.mean(np.var(f_strap, axis=1))
 
-
-    single_plot([degrees, degrees], [train_error, test_error],
+    
+    reg.single_plot([degrees, degrees], [train_error, test_error],
                 'Complexity', 'Error', ['Train Error', 'Test Error'],
                 'OLS Error', save = True, filename = 'OLS_error')
 
-    single_plot([degrees, degrees, degrees], [bias, variance, strap_error],
+    reg.single_plot([degrees, degrees, degrees], [bias, variance, strap_error],
                 'complexity', 'Error', ['Bias', 'Variance', 'Bootstrap Error'],
                 'Bias, Variance, Error', save = True, filename = 'bias_variance')
 

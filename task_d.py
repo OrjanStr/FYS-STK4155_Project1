@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
-from frankfunc import Regression, heatmap, single_plot
+from linear_regression import Regression
 import seaborn as sns
-from frankfunc import coef_plot
+from linear_regression import coef_plot
 
 """
 plotting heatmap for bootstrap and kfold, and bias variance with ridge
@@ -24,7 +24,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     deg_lam_error_kfold     = np.zeros((maxdeg,len(lam_lst)))
     deg_lam_error_bootstrap = np.zeros((maxdeg,len(lam_lst)))
 
-    # Initializing Regression class
+
     reg = Regression()
     # Setting up our own data via Franke's function if there is no data input
     if data:
@@ -61,11 +61,11 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     # Plotting MSE for lambda and complexity
     boot_title = "Ridge MSE: Bootstrap"
     kfold_title = "Ridge MSE: K-fold"
-    heatmap(deg_lam_error_bootstrap, "lambda[log]", "complexity", boot_title, ticks =  plot_label, save = True , filename = 'bootstrap_heatmap')
-    heatmap(deg_lam_error_kfold, "lambda[log]", "complexity",  kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
+    reg.heatmap(deg_lam_error_bootstrap, boot_title, ticks = plot_label, save = True , filename = 'boot_heatmap_ridge')
+    reg.heatmap(deg_lam_error_kfold, kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
-    single_plot([np.log10(lam_lst), np.log10(lam_lst)], [bias, variance], r'log10($\lambda$)', 'Error',
+    reg.single_plot([lam_lst, lam_lst], [bias, variance], r'$\lambda$', 'Error',
                  ['Bias','Variance'], 'lambda_bias_variance (deg: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
 
 if __name__ == "__main__":

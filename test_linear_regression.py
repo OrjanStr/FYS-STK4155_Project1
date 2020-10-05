@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
-from frankfunc import Regression
+from linear_regression import Regression
+from linear_regression import Visuals
+
 import unittest
 
 class TestFrankfunk(unittest.TestCase):

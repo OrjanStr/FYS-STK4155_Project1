@@ -1,7 +1,7 @@
 from random import seed
 import numpy as np
-from frankfunc import Regression
-from frankfunc import heatmap
+from linear_regression import Regression
+
 
 def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
     n=400; maxdeg=maxdeg; trials=trials
@@ -37,12 +37,12 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
 
             # Cross validation for MSE
             CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
+    
 
-
-    heatmap(lam_lst, degrees, CV_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Cross-Validation', save = True, filename='lasso_CV_frank')
-    heatmap(lam_lst, degrees, strap_error, r'$\lambda$', 'Complexity', 'Lasso MSE - Bootstrap', save = True, filename='lasso_boot_frank')
-    heatmap(lam_lst, degrees, bias, r'$\lambda$', 'Complexity', 'Lasso Bias', save = True, filename='lasso_bias_frank')
-    heatmap(lam_lst, degrees, variance, r'$\lambda$', 'Complexity', 'Lasso Variance', save = True, filename='lasso_var_frank')
+    reg.heatmap(CV_error, 'Lasso MSE - Cross-Validation', save = True, filename = 'LassoMSE_CV')
+    reg.heatmap(strap_error, 'Lasso MSE - Bootstrap', save = True, filename = 'LassoMSE_Bootstrap')
+    reg.heatmap(bias, 'Lasso Bias', save = True, filename = 'Lasso_bias')
+    reg.heatmap(variance, 'Lasso Variance', save = True, filename = 'Lasso_variance')
 
 if __name__ == "__main__":
     task_e(10,np.logspace(-15,-8,20),100)

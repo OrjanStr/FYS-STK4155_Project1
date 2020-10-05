@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from random import seed
-from frankfunc import Regression
+from linear_regression import Regression
 
 def task_a(x_set=None,y_set=None,z_set=None, data=False):
     n = 400; deg = 3
@@ -16,7 +16,6 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
     R2 = np.zeros(5)
     MSE = np.zeros(5)
 
-    # Initializing Regression class
     reg = Regression()
     # Checking if we need to generate our own dataset
     if data:

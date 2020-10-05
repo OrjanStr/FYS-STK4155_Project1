@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from frankfunc import Regression
-from frankfunc import single_plot
+from linear_regression import Regression
+
 
 def task_c(maxdeg, x=None, y=None, z=None, data=False):
     n = 400;

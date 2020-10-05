@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
-from frankfunc import Regression, heatmap
+from linear_regression import Regression
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
 
@@ -13,7 +13,7 @@ from task_a import task_a
 from task_b import task_b
 from task_c import task_c
 from task_d import task_d
-#from task_e import task_e
+from task_e import task_e
 
 # Loading terrain array
 terrain1 = imread('SRTM_data_Norway_2.tif')
@@ -29,24 +29,27 @@ x = np.linspace(0, x_dim-1, x_dim)*resolution
 y = np.linspace(0, y_dim-1, y_dim)*resolution
 x, y = np.meshgrid(x,y)
 
+#colour plot for terrain data
+# fig, ax = plt.subplots(constrained_layout=True)
+# colours_sea = plt.cm.terrain(np.linspace(0, 0.17, 256))
+# colours_land = plt.cm.terrain(np.linspace(0.25, 1, 256))
+# all_colours = np.vstack((colours_sea, colours_land))
+# terrain_map = colors.LinearSegmentedColormap.from_list('terrain_map',
+#     all_colours)
 
-fig, ax = plt.subplots(constrained_layout=True)
-colours_sea = plt.cm.terrain(np.linspace(0, 0.17, 256))
-colours_land = plt.cm.terrain(np.linspace(0.25, 1, 256))
-all_colours = np.vstack((colours_sea, colours_land))
-terrain_map = colors.LinearSegmentedColormap.from_list('terrain_map',
-    all_colours)
-"""
-offset = colors.TwoSlopeNorm(vmin=20, vcenter=80, vmax=600)
+# offset = colors.TwoSlopeNorm(vmin=20, vcenter=80, vmax=600)
 
-pcm = ax.pcolormesh(x, y, terrain1, norm = offset,  rasterized=True,
-    cmap=terrain_map, shading= 'auto')
-ax.set_xlabel('m')
-ax.set_ylabel('m')
-ax.set_aspect(1 / np.cos(np.deg2rad(20)))
-fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
-plt.show()
-"""
+# pcm = ax.pcolormesh(x, y, terrain1, norm = offset,  rasterized=True,
+#     cmap=terrain_map, shading= 'auto')
+# ax.set_xlabel('m',fontsize='16')
+# ax.set_ylabel('m',fontsize='16')
+# ax.set_aspect(1 / np.cos(np.deg2rad(20)))
+# fig.colorbar(pcm, shrink=0.6, extend='both', label='Elevation')
+# plt.title('Terrain Data',fontsize='16')
+
+# plt.savefig('visuals/terrain.pdf')
+# plt.show()
+
 # Converting Terraindata for calculations
 spacing = 1000
 # Raveling nata to get into shape (x_dim*y_dim,)
@@ -55,22 +58,23 @@ z = z.astype("float64") # Converting to float
 x = x.ravel()[::spacing]
 y = y.ravel()[::spacing]
 
-plt.figure()
-plt.title('Terrain over Norway')
-plt.imshow(terrain1, cmap='gray')
-plt.xlabel('X')
-plt.ylabel('Y')
-plt.show()
+#black and white plot for terrain data
+# plt.figure()
+# plt.title('Terrain over Norway')
+# plt.imshow(terrain1, cmap='gray')
+# plt.xlabel('X')
+# plt.ylabel('Y')
+# plt.show()
 
 # Looking at MSE and R2 for terraindata
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-maxdeg = 20
-task_b(maxdeg, x, y, z, data = True)
-#task_c(x, y, z, data = True)
+maxdeg = 10
+# task_b(maxdeg, x, y, z, data = True)
+# task_c(maxdeg, x, y, z, data = True)
 lam_lst = np.logspace(-15,-8,20)
-maxdeg = 15
-#task_d(maxdeg, lam_lst, x, y, z, data = True)
-#task_e(x, y, z, data = True)
+maxdeg = 10
+# task_d(maxdeg, lam_lst, x, y, z, data = True)
+task_e(maxdeg, lam_lst, 50, x, y, z, data = True)
 
 """
 maxdeg = 30

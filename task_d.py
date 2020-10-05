@@ -3,7 +3,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from linear_regression import Regression
-from linear_regression import Visuals
 import seaborn as sns
 from linear_regression import coef_plot
 
@@ -60,14 +59,13 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
         variance[k] = np.mean(np.var(f_strap, axis=1))
 
     # Plotting MSE for lambda and complexity
-    vs = Visuals()
     boot_title = "Ridge MSE: Bootstrap"
     kfold_title = "Ridge MSE: K-fold"
-    vs.heatmap(deg_lam_error_bootstrap, boot_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
-    vs.heatmap(deg_lam_error_kfold, kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
+    reg.heatmap(deg_lam_error_bootstrap, boot_title, ticks = plot_label, save = True , filename = 'boot_heatmap_ridge')
+    reg.heatmap(deg_lam_error_kfold, kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
-    vs.single_plot([lam_lst, lam_lst], [bias, variance], r'$\lambda$', 'Error',
+    reg.single_plot([lam_lst, lam_lst], [bias, variance], r'$\lambda$', 'Error',
                  ['Bias','Variance'], 'lambda_bias_variance (deg: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from random import seed
 import numpy as np
-from linear_regression import Regression, Visuals
+from linear_regression import Regression
 
 
 def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
@@ -25,7 +25,7 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
         for i in range(maxdeg):
             deg = degrees[i]
             reg.design_matrix(deg)
-            reg.split(reg.X, reg.f, scale=False)
+            reg.split(reg.X, reg.f, scale = False)
     
             # Bootstrap for MSE, Bias and Variance
             f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.lasso, lam_value)
@@ -38,11 +38,11 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
             # Cross validation for MSE
             CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
     
-    vs = Visuals()
-    vs.heatmap(CV_error, 'Lasso MSE - Cross-Validation', save = True, filename = 'LassoMSE_CV')
-    vs.heatmap(strap_error, 'Lasso MSE - Bootstrap', save = True, filename = 'LassoMSE_Bootstrap')
-    vs.heatmap(bias, 'Lasso Bias', save = True, filename = 'Lasso_bias')
-    vs.heatmap(variance, 'Lasso Variance', save = True, filename = 'Lasso_variance')
+    
+    reg.heatmap(CV_error, 'Lasso MSE - Cross-Validation', save = True, filename = 'LassoMSE_CV')
+    reg.heatmap(strap_error, 'Lasso MSE - Bootstrap', save = True, filename = 'LassoMSE_Bootstrap')
+    reg.heatmap(bias, 'Lasso Bias', save = True, filename = 'Lasso_bias')
+    reg.heatmap(variance, 'Lasso Variance', save = True, filename = 'Lasso_variance')
 
 if __name__ == "__main__":
     task_e(10,np.logspace(-15,-8,20),100)

@@ -29,7 +29,7 @@ class Regression():
         self.beta_for_plot_ridge = None
         self.beta_OLS = None
 
-        self.terrain = False
+        self.terrain = 5
 
     def franke_function(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -73,7 +73,7 @@ class Regression():
             X[:,1:] -= np.mean(X[:,1:], axis=0)
             f -= np.mean(f)
         # Splitting Data
-        np.random.seed(42)
+        # np.random.seed(42)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
         return self.X_train, self.X_test, self.f_train, self.f_test
 
@@ -137,7 +137,7 @@ class Regression():
 
 
     def k_fold(self,X,k, method, lam = None):
-
+        
         #scaling data
         X[:,1:] -= np.mean(X[:,1:], axis=0)
         f = self.f - np.mean(self.f)
@@ -194,8 +194,6 @@ class Regression():
         return np.mean(test_err_arr)
 
 
-class Visuals(Regression):
-
     def heatmap(self, data, title,ticks=None, save = False, filename = None):
 
         if ticks:
@@ -209,15 +207,13 @@ class Visuals(Regression):
         plt.ylabel('Complexity', fontsize='16')
         plt.title(title, fontsize='16')
         plt.tick_params(labelsize='12')
-
         if save and self.terrain:
-            plt.savefig('visuals/Terrain_data/' + filename + '.pdf')
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and not self.terrain:
             plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
 
     def single_plot(self, x,y, label_x, label_y, func_label, title, save = False, filename = None):
-        print (self.terrain)
         plt.style.use('seaborn-whitegrid')
         plt.title(title, fontsize='16')
 
@@ -229,7 +225,7 @@ class Visuals(Regression):
         plt.tick_params(labelsize='12')
         plt.legend(fontsize='12')
         if save and self.terrain:
-            plt.savefig('visuals/Terrain_data/' + filename + '.pdf')
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and self.terrain == False:
             plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
@@ -253,7 +249,7 @@ class Visuals(Regression):
         axs[1].set_ylabel(label_y[1])
 
         if save and self.terrain:
-            plt.savefig('visuals/Terrain_data/' + filename + '.pdf')
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and not self.terrain:
             plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
         plt.legend()
@@ -277,8 +273,14 @@ def coef_plot(deg, n, lam_lst):
         reg.lasso(reg.X_train, reg.X_test, reg.f_train, lamb)
         lasso_coefs.append(reg.beta_for_plot_lasso)
 
-    fig, axs = plt.subplots(2)
-    fig.suptitle('Ridge and Lasso as lambda increases')
+    fig, axs = plt.subplots(2, sharey=True)
+    fig.suptitle(r'$\beta$ for increasing $\lambda$ values',fontsize='16')
     axs[0].plot(lam_lst[:18], ridge_coefs[:18])
+    axs[0].set_title('Ridge', fontsize='14')
     axs[1].plot(lam_lst[:10], lasso_coefs[:10])
+    axs[1].set_title('Lasso', fontsize='14')
+    fig.text(0.04, 0.5, r'$\beta$', ha='center',fontsize='16')
+
+    plt.xlabel(r'$\lambda$',fontsize='16')
+    plt.savefig('visuals/coefplot_ridge_lasso.pdf')
     plt.show()

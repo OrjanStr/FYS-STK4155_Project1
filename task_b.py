@@ -49,7 +49,7 @@ def task_b(maxdeg, x = None , y = None , z = None, data = False):
         bias[i] = np.mean( (reg.f_test - f_hat)**2)
         variance[i] = np.mean(np.var(f_strap, axis=1))
 
-    
+
     reg.single_plot([degrees, degrees], [train_error, test_error],
                 'Complexity', 'Error', ['Train Error', 'Test Error'],
                 'OLS Error', save = True, filename = 'OLS_error')

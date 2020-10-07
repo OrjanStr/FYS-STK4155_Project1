@@ -1,14 +1,35 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from random import seed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
 import seaborn as sb
-import pandas as pd
 
 
 class Regression():
+    """
+    """
+
+    def __init__(self):
+        self.x = None
+        self.y = None
+        self.f = None
+
+        self.n = None
+        self.o2 = None
+
+        self.X = None
+        self.X_train = None
+        self.X_test = None
+        self.f_train = None
+        self.f_test = None
+
+        self.confidence = None
+        self.beta_for_plot_lasso = None
+        self.beta_for_plot_ridge = None
+        self.beta_OLS = None
+
+        self.terrain = 5
 
     def franke_function(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -26,7 +47,11 @@ class Regression():
 
         self.o2 = np.var(noise)
         self.n = n
+
     def data_setup(self,x,y,z):
+        # to save visuals in correct folder
+        self.terrain = True
+
         self.n = len(x)
         self.x ,self.y, self.f = x,y,z
 
@@ -48,7 +73,7 @@ class Regression():
             X[:,1:] -= np.mean(X[:,1:], axis=0)
             f -= np.mean(f)
         # Splitting Data
-        np.random.seed(42)
+        # np.random.seed(42)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
         return self.X_train, self.X_test, self.f_train, self.f_test
 
@@ -152,10 +177,10 @@ class Regression():
             f_train_lst = []
             X_train_lst = []
 
-            for k in range(len(X_train)):
-                for j in range(len(X_train[k])):
-                    f_train_lst.append(f_train[k][j])
-                    X_train_lst.append(X_train[k][j])
+            for i in range(len(X_train)):
+                for j in range(len(X_train[i])):
+                    f_train_lst.append(f_train[i][j])
+                    X_train_lst.append(X_train[i][j])
 
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)
@@ -169,59 +194,66 @@ class Regression():
         return np.mean(test_err_arr)
 
 
+    def heatmap(self, data, title,ticks=None, save = False, filename = None):
 
-def heatmap(data, label_x, label_y, title, ticks=None, save = False, filename = None):
-    ax = sb.heatmap(data, cmap='coolwarm',
-               square = True, xticklabels = ticks,)
+        if ticks:
+            sb.heatmap(data, cmap='coolwarm',
+                   square = True, xticklabels = ticks)
+        else:
+            sb.heatmap(data, cmap='coolwarm',
+                   square = True)
 
+        plt.xlabel(r'$\lambda$', fontsize='16')
+        plt.ylabel('Complexity', fontsize='16')
+        plt.title(title, fontsize='16')
+        plt.tick_params(labelsize='12')
+        if save and self.terrain:
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
+        elif save and not self.terrain:
+            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
+        plt.show()
 
-    plt.xlabel(r'$\lambda$', fontsize='16')
-    plt.ylabel('Complexity', fontsize='16')
-    plt.title(title, fontsize='16')
-    plt.tick_params(labelsize='12')
+    def single_plot(self, x,y, label_x, label_y, func_label, title, save = False, filename = None):
+        plt.style.use('seaborn-whitegrid')
+        plt.title(title, fontsize='16')
 
-    if save:
-        plt.savefig('visuals/' + filename + '.pdf')
-    plt.show()
+        for i in range(len(x)):
+            plt.plot(x[i], y[i], label = func_label[i])
 
-def single_plot(x,y, label_x, label_y, func_label, title, save = False, filename = None):
-
-    plt.style.use('seaborn-whitegrid')
-    plt.title(title, fontsize='16')
-
-    for i in range(len(x)):
-        plt.plot(x[i], y[i], label = func_label[i])
-
-    plt.xlabel(label_x, fontsize='16')
-    plt.ylabel(label_y, fontsize='16')
-    plt.tick_params(labelsize='12')
-    plt.legend(fontsize='12')
-    if save:
-        plt.savefig('visuals/' + filename + '.pdf')
-    plt.show()
-
-
-def compare_plot(x, y, label_x, label_y,
-                 graph_label, title, subtitle, save = False, filename = None):
-
-    fig, axs = plt.subplots(2)
-    fig.suptitle(title)
-
-    axs[0].plot(x[0], y[0], label = graph_label[0])
-    axs[0].title.set_text(subtitle[0])
-    axs[0].set_xlabel(label_x[0])
-    axs[0].set_ylabel(label_y[0])
+        plt.xlabel(label_x, fontsize='16')
+        plt.ylabel(label_y, fontsize='16')
+        plt.tick_params(labelsize='12')
+        plt.legend(fontsize='12')
+        if save and self.terrain:
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
+        elif save and self.terrain == False:
+            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
+        plt.show()
 
 
-    axs[1].plot(x[1], y[1], label = graph_label[1])
-    axs[1].title.set_text(subtitle[1])
-    axs[1].set_xlabel(label_x[1])
-    axs[1].set_ylabel(label_y[1])
+    def compare_plot(self, x, y, label_x, label_y,
+                     graph_label, title, subtitle, save = False, filename = None):
 
-    if save:
-        plt.savefig('visuals/' + filename + '.pdf')
-    plt.legend()
-    plt.show()
+        fig, axs = plt.subplots(2)
+        fig.suptitle(title)
+
+        axs[0].plot(x[0], y[0], label = graph_label[0])
+        axs[0].title.set_text(subtitle[0])
+        axs[0].set_xlabel(label_x[0])
+        axs[0].set_ylabel(label_y[0])
+
+
+        axs[1].plot(x[1], y[1], label = graph_label[1])
+        axs[1].title.set_text(subtitle[1])
+        axs[1].set_xlabel(label_x[1])
+        axs[1].set_ylabel(label_y[1])
+
+        if save and self.terrain:
+            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
+        elif save and not self.terrain:
+            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
+        plt.legend()
+        plt.show()
 
 
 
@@ -241,12 +273,14 @@ def coef_plot(deg, n, lam_lst):
         reg.lasso(reg.X_train, reg.X_test, reg.f_train, lamb)
         lasso_coefs.append(reg.beta_for_plot_lasso)
 
-    fig, axs = plt.subplots(2)
-    fig.suptitle('Ridge and Lasso as lambda increases')
+    fig, axs = plt.subplots(2, sharey=True)
+    fig.suptitle(r'$\beta$ for increasing $\lambda$ values',fontsize='16')
     axs[0].plot(lam_lst[:18], ridge_coefs[:18])
+    axs[0].set_title('Ridge', fontsize='14')
     axs[1].plot(lam_lst[:10], lasso_coefs[:10])
+    axs[1].set_title('Lasso', fontsize='14')
+    fig.text(0.04, 0.5, r'$\beta$', ha='center',fontsize='16')
+
+    plt.xlabel(r'$\lambda$',fontsize='16')
+    plt.savefig('visuals/coefplot_ridge_lasso.pdf')
     plt.show()
-
-
-lam_lst = np.logspace(-4,-1.5,20)
-coef_plot(3,400,lam_lst)

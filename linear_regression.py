@@ -9,7 +9,7 @@ import seaborn as sb
 class Regression():
     """
     """
-    
+
     def __init__(self):
         self.x = None
         self.y = None
@@ -29,7 +29,7 @@ class Regression():
         self.beta_for_plot_ridge = None
         self.beta_OLS = None
 
-        self.terrain = 5
+        self.terrain = False
 
     def franke_function(self,x,y):
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -51,7 +51,7 @@ class Regression():
     def data_setup(self,x,y,z):
         # to save visuals in correct folder
         self.terrain = True
-        
+
         self.n = len(x)
         self.x ,self.y, self.f = x,y,z
 
@@ -70,11 +70,10 @@ class Regression():
     def split(self, X, f, scale=True):
         # Scaling Data
         if scale:
-            X[:,1:] -= np.mean(X[:,1:], axis=0)
-            f -= np.mean(f)
+            X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:], axis=0)
+            f = (f - np.mean(f))/np.std(f)
         # Splitting Data
-        # np.random.seed(42)
-        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
+        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2, random_state=42)
         return self.X_train, self.X_test, self.f_train, self.f_test
 
 
@@ -91,6 +90,9 @@ class Regression():
         self.beta_OLS = beta # Store this beta in class (for confidence interval)
         f_tilde = X_train @ beta
         f_pred = X_test @ beta
+
+        #print("filde:", f_tilde.shape)
+        #print("fpred: ", f_pred.shape)
 
         return f_tilde, f_pred
 
@@ -137,10 +139,10 @@ class Regression():
 
 
     def k_fold(self,X,k, method, lam = None):
-        
+
         #scaling data
-        X[:,1:] -= np.mean(X[:,1:], axis=0)
-        f = self.f - np.mean(self.f)
+        X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:])
+        f = (self.f - np.mean(self.f))/np.std(self.f)
 
         #splitting data
 
@@ -208,8 +210,10 @@ class Regression():
         plt.title(title, fontsize='16')
         plt.tick_params(labelsize='12')
         if save and self.terrain:
+            print("Terrainsave!")
             plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and not self.terrain:
+            print("Frankesave!")
             plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
 

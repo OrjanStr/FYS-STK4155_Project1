@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from linear_regression import Regression
+from sklearn.model_selection import KFold
 
 
 def task_c(maxdeg, x=None, y=None, z=None, data=False):
@@ -19,6 +20,7 @@ def task_c(maxdeg, x=None, y=None, z=None, data=False):
     degrees = np.linspace(1,maxdeg,maxdeg, dtype=int) # Complexity array
     MSE_test_bootstrap  = np.zeros(maxdeg)
     MSE_test_CV  = np.zeros(maxdeg)
+    MSE_test_sklearn = np.zeros(maxdeg)
 
     # Looping through complexities
     for i in range(maxdeg):
@@ -33,9 +35,17 @@ def task_c(maxdeg, x=None, y=None, z=None, data=False):
 
         # Cross-Validation
         MSE_test_CV[i] = reg.k_fold(reg.X,5, reg.OLS, lam=0)
+        
+        kfold = KFold(n_splits = 5)
+        for train, test in kfold.split(reg.X):
+            Xtrain, Xtest = reg.X[train], reg.X[test]
+            ftrain, ftest =  reg.f[train], reg.f[test]
+            f_tilde, f_pred = reg.OLS(Xtrain, Xtest, ftrain)
+            
+            MSE_test_sklearn[i] = np.mean( (f_pred - ftest)**2 )
 
     # Plotting the two MSEs
-    single_plot((degrees, degrees), (MSE_test_bootstrap, MSE_test_CV), 'Complexity', 'MSE', ('Bootstrap', 'K-fold'),
+    reg.single_plot((degrees, degrees, degrees), (MSE_test_bootstrap, MSE_test_CV, MSE_test_sklearn), 'Complexity', 'MSE', ('Bootstrap', 'K-fold', 'sklearn'),
     'Bootstrap MSE vs. K-fold MSE for OLS', save = True, filename = 'Kfold_error_OLS')
 
 if __name__ == "__main__":

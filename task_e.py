@@ -46,3 +46,15 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
 
 if __name__ == "__main__":
     task_e(10,np.logspace(-15,-8,20),100)
+
+"""
+        OLS = LinearRegression(deg)
+
+        kfold = KFold(n_splits = 5)
+        for train, test in kfold.split(reg.X):
+            Xtrain, Xtest = reg.X[train], reg.X[test]
+            ftrain, ftest =  reg.f[train], reg.f[test]
+            f_tilde, f_pred = reg.OLS(Xtrain, Xtest, ftrain)
+            
+            MSE_test_sklearn[i] = np.mean( (f_pred - ftest)**2 )
+"""

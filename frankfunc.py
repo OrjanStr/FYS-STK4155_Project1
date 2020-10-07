@@ -6,6 +6,7 @@ from sklearn.utils import resample
 from sklearn.linear_model import Lasso
 import seaborn as sb
 import pandas as pd
+# import numpy.random import shuffle
 
 
 class Regression():

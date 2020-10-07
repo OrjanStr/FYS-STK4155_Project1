@@ -17,7 +17,7 @@ class Regression():
         self.f = None
         self.n = None
         self.o2 = None
-        self.terrain = None
+        self.terrain = False
 
         #defined in design matrix
         self.X = None

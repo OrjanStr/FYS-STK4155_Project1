@@ -11,27 +11,49 @@ class Regression():
     """
 
     def __init__(self):
+        #defined in dataset
         self.x = None
         self.y = None
         self.f = None
-
         self.n = None
         self.o2 = None
+        self.terrain = None
 
+        #defined in design matrix
         self.X = None
+
+        #defined in split
         self.X_train = None
         self.X_test = None
         self.f_train = None
         self.f_test = None
 
+        #defined in beta_confidence
         self.confidence = None
+
+        #defined in lasso
         self.beta_for_plot_lasso = None
+
+        #defined in ridge
         self.beta_for_plot_ridge = None
+
+        #defined in OLS
         self.beta_OLS = None
 
-        self.terrain = False
+
 
     def franke_function(self,x,y):
+        """
+        Calculate Franke's function from x and y values
+
+        Args:
+            x (array): x-values to use for computing th franke function.
+            y (array): x-values to use for computing th franke function.
+
+        Returns:
+            array: array of same length as x, containing the computed function.
+
+        """
         term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
         term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
         term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
@@ -40,6 +62,17 @@ class Regression():
         return term1 + term2 + term3 + term4
 
     def dataset_franke(self,n):
+        """
+        Create a data set using random values between 0 and 1 and calculate
+        franke's function from those values'
+
+        Args:
+            n (int): total amount of data points.
+
+        Returns:
+            None.
+
+        """
         self.x = np.random.rand(n)
         self.y = np.random.rand(n)
         noise = 0.1*np.random.randn(n)
@@ -49,6 +82,18 @@ class Regression():
         self.n = n
 
     def data_setup(self,x,y,z):
+        """
+        create class variables from x,y and z, so they can be used in the class
+
+        Args:
+            x (array): DESCRIPTION.
+            y (array): DESCRIPTION.
+            z (array): DESCRIPTION.
+
+        Returns:
+            None.
+
+        """
         # to save visuals in correct folder
         self.terrain = True
 
@@ -56,6 +101,16 @@ class Regression():
         self.x ,self.y, self.f = x,y,z
 
     def design_matrix(self, deg):
+        """
+        create design matrix
+
+        Args:
+            deg (int): complexity of the model.
+
+        Returns:
+            X (matrix): design matrix of shape (n_datapoints, p_features).
+
+        """
         # features
         p = int(0.5*( (deg+1)*(deg+2) ))
         X = np.zeros((self.n,p))
@@ -68,20 +123,60 @@ class Regression():
         return X
 
     def split(self, X, f, scale=True):
+        """
+        Split into training and testing data
+
+        Args:
+            X (matrix): Design matrix.
+            f (array): Response variable
+            scale (boolean, optional): if True scales the data. Defaults to True.
+
+        Returns:
+            None.
+
+        """
         # Scaling Data
         if scale:
             X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:], axis=0)
             f = (f - np.mean(f))/np.std(f)
         # Splitting Data
-        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2, random_state=42)
-        return self.X_train, self.X_test, self.f_train, self.f_test
+        # np.random.seed(42)
+        self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
 
 
     def MSE(self,y,y_pred):
+        """
+        Calculate the mean squared error
+
+        Args:
+            y (array): Testing data set for y.
+            y_pred (array): prediction for y.
+
+        Returns:
+            mse (float): Mean squared error.
+
+        """
         mse = np.mean((y - y_pred)**2)
         return mse
 
     def OLS(self, X_train, X_test, f_train, lam=0):
+        """
+        Compute model with Ordinary Least Squared
+
+        Args:
+            X_train (matrix): DESCRIPTION.
+            X_test (matrix): DESCRIPTION.
+            f_train (array): DESCRIPTION.
+            lam (float >=0, optional): set to zero in OLS. Defaults to 0.
+
+        Raises:
+            ValueError: if a lambda value lam>0 is used.
+
+        Returns:
+            f_tilde (array): .
+            f_pred (array): .
+
+        """
         if lam>0:
             raise ValueError('You are trying to use OLS with a lambda value greater than 0')
 
@@ -97,6 +192,22 @@ class Regression():
         return f_tilde, f_pred
 
     def bootstrap(self, X_train, X_test, f_train, trials, method, lam):
+        """
+        Use bootrap resampling to campute prediction and MSE
+
+        Args:
+            X_train (matrix): Training data from the split method.
+            X_test (matrix): Testing data from the split method.
+            f_train (array): Training data from the split method.
+            trials (int): Number of bootstraps.
+            method (function): which linear reression method to use, eg OLS.
+            lam (float): which lambda value to use if ridge/lasso. if OLS set lam =0
+
+        Returns:
+            z_pred (TYPE): DESCRIPTION.
+            mse (TYPE): DESCRIPTION.
+
+        """
         mse = np.zeros(trials)
 
         z_pred = np.zeros((self.f_test.shape[0], trials))
@@ -107,6 +218,19 @@ class Regression():
         return z_pred, mse
 
     def beta_confidence(self, beta, o2, X_train,n):
+        """
+
+
+        Args:
+            beta (TYPE): DESCRIPTION.
+            o2 (TYPE): DESCRIPTION.
+            X_train (TYPE): DESCRIPTION.
+            n (TYPE): DESCRIPTION.
+
+        Returns:
+            var_beta (TYPE): DESCRIPTION.
+
+        """
         # Calculating variance
         var_beta_matrix = o2 * np.linalg.pinv(X_train.T @ X_train)
         var_beta = np.diagonal(var_beta_matrix)
@@ -118,6 +242,20 @@ class Regression():
         return var_beta
 
     def ridge(self, X_train, X_test, f_train, lam):
+        """
+
+
+        Args:
+            X_train (TYPE): DESCRIPTION.
+            X_test (TYPE): DESCRIPTION.
+            f_train (TYPE): DESCRIPTION.
+            lam (TYPE): DESCRIPTION.
+
+        Returns:
+            f_tilde (TYPE): DESCRIPTION.
+            f_pred (TYPE): DESCRIPTION.
+
+        """
         beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
         f_tilde = X_train @ beta
         f_pred = X_test @ beta
@@ -127,6 +265,20 @@ class Regression():
         return f_tilde, f_pred
 
     def lasso(self,X_train, X_test, f_train, lam):
+        """
+
+
+        Args:
+            X_train (TYPE): DESCRIPTION.
+            X_test (TYPE): DESCRIPTION.
+            f_train (TYPE): DESCRIPTION.
+            lam (TYPE): DESCRIPTION.
+
+        Returns:
+            f_tilde (TYPE): DESCRIPTION.
+            f_pred (TYPE): DESCRIPTION.
+
+        """
 
         lassoreg = Lasso(alpha = lam)
         lassoreg.fit(X_train,f_train)
@@ -139,6 +291,20 @@ class Regression():
 
 
     def k_fold(self,X,k, method, lam = None):
+        """
+
+
+        Args:
+            X (matrix): Design matrix.
+            k (int): number of folds.
+            method (function): which method to use, eg. Ridge.
+            lam (TYPE, optional): which lambda value to use if choose ridge or
+                    lasso. Defaults to None.
+
+        Returns:
+            TYPE: DESCRIPTION.
+
+        """
 
         #scaling data
         X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:])
@@ -179,10 +345,10 @@ class Regression():
             f_train_lst = []
             X_train_lst = []
 
-            for i in range(len(X_train)):
-                for j in range(len(X_train[i])):
-                    f_train_lst.append(f_train[i][j])
-                    X_train_lst.append(X_train[i][j])
+            for j in range(len(X_train)):
+                for k in range(len(X_train[j])):
+                    f_train_lst.append(f_train[j][k])
+                    X_train_lst.append(X_train[j][k])
 
             f_train = np.array(f_train_lst)
             X_train = np.array(X_train_lst)
@@ -197,6 +363,23 @@ class Regression():
 
 
     def heatmap(self, data, title,ticks=None, save = False, filename = None):
+        """
+
+
+        Args:
+            data (matrix): data to plot
+            title (string): title of plot
+            ticks (list of strings, optional): tick to put on the x axis
+                    . Defaults to None.
+            save (boolean, optional): if True, saves the plot as a pdf
+                                    . Defaults to False.
+            filename (string, optional): filename without file extension
+                                        . Defaults to None.
+
+        Returns:
+            None.
+
+        """
 
         if ticks:
             sb.heatmap(data, cmap='coolwarm',
@@ -218,6 +401,23 @@ class Regression():
         plt.show()
 
     def single_plot(self, x,y, label_x, label_y, func_label, title, save = False, filename = None):
+        """
+
+
+        Args:
+            x (array): DESCRIPTION.
+            y (array): DESCRIPTION.
+            label_x (string): DESCRIPTION.
+            label_y (string): DESCRIPTION.
+            func_label (list of strings): DESCRIPTION.
+            title (string): DESCRIPTION.
+            save (boolean, optional): DESCRIPTION. Defaults to False.
+            filename (string, optional): DESCRIPTION. Defaults to None.
+
+        Returns:
+            None.
+
+        """
         plt.style.use('seaborn-whitegrid')
         plt.title(title, fontsize='16')
 
@@ -237,6 +437,30 @@ class Regression():
 
     def compare_plot(self, x, y, label_x, label_y,
                      graph_label, title, subtitle, save = False, filename = None):
+        """
+
+
+        Args:
+            x (list): list where the first element is the x values for the
+                        first plot and the second element is the x values for
+                        the second plot.
+            y (list): same as x, but for y values.
+            label_x (string): x_label to use for plot.
+            label_y (string): y_label to use for plot.
+            graph_label (list of strings): first element of list is the label
+                        to use for the first plot, second element is the label
+                        to use for the second plot.
+            title (string): title of plot.
+            subtitle (list of strings): list of individual titles for the two plots
+            save (boolean, optional): if True, saves the plot to correct folder
+                        . Defaults to False.
+            filename ('string', optional): filename without file extension
+                        saves plot as pdf. Defaults to None.
+
+        Returns:
+            None.
+
+        """
 
         fig, axs = plt.subplots(2)
         fig.suptitle(title)
@@ -262,6 +486,18 @@ class Regression():
 
 
 def coef_plot(deg, n, lam_lst):
+    """
+    Plot coefficients for lasso and ridge
+
+    Args:
+        deg (int): Complexity: decides number of coefficients.
+        n (int): Data points.
+        lam_lst (array): lambda values to loop through.
+
+    Returns:
+        None.
+
+    """
     reg = Regression()
     reg.dataset_franke(n)
     X = reg.design_matrix(deg)

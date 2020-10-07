@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from linear_regression import Regression
-from linear_regression import Visuals
 
 import unittest
 
@@ -36,8 +35,8 @@ class TestFrankfunk(unittest.TestCase):
         reg = Regression()
         reg.dataset_franke(10)
         X = reg.design_matrix(deg)
-        X_train, X_test, f_train, f_test = reg.split(X, reg.f)
-        reg.OLS(X_train, X_test, f_train)
+        reg.split(X, reg.f)
+        reg.OLS(reg.X_train, reg.X_test, reg.f_train)
         actual = reg.beta_OLS
         expected = (28,)
     
@@ -57,9 +56,9 @@ class TestFrankfunk(unittest.TestCase):
         reg.data_setup(x,y,z)
         for i, deg in enumerate(degrees):
             X = reg.design_matrix(deg)
-            X_train, X_test, f_train, f_test = reg.split(X, reg.f)
-            f_tilde, f_pred = reg.OLS(X_train, X_test, f_train)
-            mse_lst[i] = np.mean((f_pred - f_test)**2)
+            reg.split(X, reg.f)
+            f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
+            mse_lst[i] = np.mean((f_pred - reg.f_test)**2)
 
         index = np.argmin(mse_lst)
         self.assertEqual(index, 2) # index 2 = 3rd degree 
@@ -77,9 +76,9 @@ class TestFrankfunk(unittest.TestCase):
         reg.data_setup(x,y,z)
         for i, deg in enumerate(degrees):
             X = reg.design_matrix(deg)
-            X_train, X_test, f_train, f_test = reg.split(X, reg.f)
-            f_tilde, f_pred = reg.ridge(X_train, X_test, f_train, lam=0)
-            mse_lst[i] = np.mean((f_pred - f_test)**2)
+            reg.split(X, reg.f)
+            f_tilde, f_pred = reg.ridge(reg.X_train, reg.X_test, reg.f_train, lam=0)
+            mse_lst[i] = np.mean((f_pred - reg.f_test)**2)
 
         index = np.argmin(mse_lst)
         self.assertEqual(index, 2) # index 2 = 3rd degree 

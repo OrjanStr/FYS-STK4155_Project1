@@ -75,7 +75,7 @@ task_c(maxdeg, x, y, z, data = True)
 lam_lst = np.logspace(-15,-8,20)
 maxdeg = 10
 # task_d(maxdeg, lam_lst, x, y, z, data = True)
-#task_e(maxdeg, lam_lst, 50, x, y, z, data = True)
+#task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
 
 """
 maxdeg = 20

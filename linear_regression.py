@@ -17,7 +17,7 @@ class Regression():
         self.f = None
         self.n = None
         self.o2 = None
-        self.terrain = None
+        self.terrain = False
 
         #defined in design matrix
         self.X = None
@@ -140,7 +140,7 @@ class Regression():
             X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:], axis=0)
             f = (f - np.mean(f))/np.std(f)
         # Splitting Data
-        # np.random.seed(42)
+        np.random.seed(42)
         self.X_train, self.X_test, self.f_train, self.f_test = train_test_split(X,f,test_size=0.2)
 
 
@@ -388,7 +388,7 @@ class Regression():
             sb.heatmap(data, cmap='coolwarm',
                    square = True)
 
-        plt.xlabel(r'$\lambda$', fontsize='16')
+        plt.xlabel(r'$log10(\lambda)$', fontsize='16')
         plt.ylabel('Complexity', fontsize='16')
         plt.title(title, fontsize='16')
         plt.tick_params(labelsize='12')

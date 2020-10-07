@@ -5,9 +5,9 @@ from linear_regression import Regression
 
 def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
     n=400; maxdeg=maxdeg; trials=trials
-    lam_lst = np.logspace(-8,-2,10)
     degrees = np.linspace(1,maxdeg,maxdeg, dtype=int)
-    plot_label = [ '%.g' % elem for elem in np.log10(lam_lst) ]
+    plot_label_x = [ '%i' % elem for elem in np.log10(lam_lst) ]
+    plot_label_y = [ '%i' % elem for elem in degrees ]
 
     # Arrays for plotting MSE, Bias and Variance (bootstrap)
     bias = np.zeros((maxdeg, len(lam_lst)))
@@ -40,11 +40,11 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
             CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
 
 
-    reg.heatmap(CV_error, 'Lasso MSE - Cross-Validation', ticks=plot_label, save = True, filename = 'LassoMSE_CV')
-    reg.heatmap(strap_error, 'Lasso MSE - Bootstrap', ticks=plot_label, save = True, filename = 'LassoMSE_Bootstrap')
-    reg.heatmap(bias, 'Lasso Bias', ticks=plot_label, save = True, filename = 'Lasso_bias')
-    reg.heatmap(variance, 'Lasso Variance', ticks=plot_label, save = True, filename = 'Lasso_variance')
+    reg.heatmap(CV_error, 'Lasso MSE - Cross-Validation', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'LassoMSE_CV')
+    reg.heatmap(strap_error, 'Lasso MSE - Bootstrap', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'LassoMSE_Bootstrap')
+    reg.heatmap(bias, 'Lasso Bias', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'Lasso_bias')
+    reg.heatmap(variance, 'Lasso Variance', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'Lasso_variance')
 
 if __name__ == "__main__":
-    lam_lst = np.logspace(-15,-8,20)
+    lam_lst = np.logspace(-15,0,20)
     task_e(10,lam_lst,100)

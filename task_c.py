@@ -45,7 +45,7 @@ def task_c(maxdeg, x=None, y=None, z=None, data=False):
             MSE_test_sklearn[i] = np.mean( (f_pred - ftest)**2 )
 
     # Plotting the two MSEs
-    reg.single_plot((degrees, degrees, degrees), (MSE_test_bootstrap, MSE_test_CV, MSE_test_sklearn), 'Complexity', 'MSE', ('Bootstrap', 'K-fold', 'sklearn'),
+    reg.single_plot((degrees, degrees), (MSE_test_bootstrap, MSE_test_CV), 'Complexity', 'MSE', ('Bootstrap', 'K-fold'),
     'Bootstrap MSE vs. K-fold MSE for OLS', save = True, filename = 'Kfold_error_OLS')
 
 if __name__ == "__main__":

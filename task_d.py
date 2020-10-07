@@ -14,7 +14,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
 
     n = 400
     degrees = np.linspace(1,maxdeg,maxdeg, dtype = int)
-    plot_label = [ '%.2E' % elem for elem in lam_lst ]
+    plot_label = [ '%i' % elem for elem in np.log10(lam_lst) ]
 
     # Arrays for plotting MSE, Bias and Variance
     bias        = np.zeros(len(lam_lst))
@@ -46,7 +46,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
             # Calculate k-fold MSE and assign for plot array
             deg_lam_error_kfold[i,k]= reg.k_fold(reg.X,5,reg.ridge,lam_value)
 
-    deg = 10 # Finding bias and variance dependency on lambda for degree 8
+    deg = 10 # Finding bias and variance dependency on lambda for degree 10
     for k, lam_value in enumerate(lam_lst):
 
         # Bootstrap resampling
@@ -65,12 +65,12 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     reg.heatmap(deg_lam_error_kfold, kfold_title, ticks = plot_label, save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
-    reg.single_plot([lam_lst, lam_lst], [bias, variance], r'$\lambda$', 'Error',
+    reg.single_plot([np.log10(lam_lst), np.log10(lam_lst)], [bias, variance], r'$\lambda$', 'Error',
                  ['Bias','Variance'], 'lambda_bias_variance (deg: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
 
 if __name__ == "__main__":
-    lam_lst = np.logspace(-15,-8,20)
-    maxdeg = 10
+    lam_lst = np.logspace(-15,0,20)
+    maxdeg = 12
     task_d(maxdeg, lam_lst)
 
     lam_lst = np.logspace(-4,-1.5,20)

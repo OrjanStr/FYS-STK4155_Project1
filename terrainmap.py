@@ -21,12 +21,12 @@ terrain2 = np.asarray(terrain1)
 
 print(terrain1.shape)
 
-resolution = 10 # Meters (according to website)
+resolution = 30 # Meters (according to website)
 y_dim, x_dim = len(terrain1[:,0]), len(terrain1[0])
 
 # Setting up x and y arrays
-x = np.linspace(0, x_dim-1, x_dim)#*resolution
-y = np.linspace(0, y_dim-1, y_dim)#*resolution
+x = np.linspace(0, x_dim-1, x_dim)*resolution
+y = np.linspace(0, y_dim-1, y_dim)*resolution
 x, y = np.meshgrid(x,y)
 
 #colour plot for terrain data
@@ -53,10 +53,10 @@ x, y = np.meshgrid(x,y)
 # Converting Terraindata for calculations
 spacing = 1000
 # Raveling nata to get into shape (x_dim*y_dim,)
-z = terrain1[:100, :100].ravel()
+z = terrain1.ravel()[::spacing]
 z = z.astype("float64") # Converting to float
-x = x[:100, :100].ravel()
-y = y[:100, :100].ravel()
+x = x.ravel()[::spacing]
+y = y.ravel()[::spacing]
 print(z)
 
 #black and white plot for terrain data
@@ -69,10 +69,10 @@ print(z)
 
 # Looking at MSE and R2 for terraindata
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-maxdeg = 20
-#task_b(maxdeg, x, y, z, data = True)
-task_c(maxdeg, x, y, z, data = True)
-lam_lst = np.logspace(-15,-8,20)
+maxdeg = 40
+task_b(maxdeg, x, y, z, data = True)
+#task_c(maxdeg, x, y, z, data = True)
+lam_lst = np.logspace(-15,3,20)
 maxdeg = 10
 #task_d(maxdeg, lam_lst, x, y, z, data = True)
 #task_e(maxdeg, lam_lst, 20, x, y, z, data = True)

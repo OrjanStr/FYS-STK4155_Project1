@@ -362,7 +362,7 @@ class Regression():
         return np.mean(test_err_arr)
 
 
-    def heatmap(self, data, title,ticks=None, save = False, filename = None):
+    def heatmap(self, data, title, ticks_x=None, ticks_y=None, save = False, filename = None):
         """
 
 
@@ -381,12 +381,12 @@ class Regression():
 
         """
 
-        if ticks:
+        if ticks_x:
             sb.heatmap(data, cmap='coolwarm',
-                   square = True, xticklabels = ticks)
+                   square = True, xticklabels = ticks_x, yticklabels = ticks_y).invert_yaxis()
         else:
             sb.heatmap(data, cmap='coolwarm',
-                   square = True)
+                   square = True).invert_yaxis()
 
         plt.xlabel(r'$log10(\lambda)$', fontsize='16')
         plt.ylabel('Complexity', fontsize='16')

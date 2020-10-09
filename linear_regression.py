@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
 import seaborn as sb
+from sklearn.utils.testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 
 class Regression():
@@ -264,6 +266,7 @@ class Regression():
 
         return f_tilde, f_pred
 
+    @ignore_warnings(category=ConvergenceWarning)
     def lasso(self,X_train, X_test, f_train, lam):
         """
 

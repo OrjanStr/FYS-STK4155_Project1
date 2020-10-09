@@ -10,6 +10,7 @@ class TestFrankfunk(unittest.TestCase):
         
     
     def test_DM(self):
+
         x = np.linspace(1,5,5)
         y = np.linspace(1,5,5)
         z = np.linspace(1,5,5)

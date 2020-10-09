@@ -45,7 +45,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
             # Assigning the bootstrap MSE to our plot array
             deg_lam_error_bootstrap[i,k] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
             # Calculate k-fold MSE and assign for plot array
-            deg_lam_error_kfold[i,k]= reg.k_fold(reg.X,5,reg.ridge,lam_value)
+            deg_lam_error_kfold[i,k]= reg.k_fold(reg.X,10,reg.ridge,lam_value)
 
     deg = 10 # Finding bias and variance dependency on lambda for degree 10
     for k, lam_value in enumerate(lam_lst):

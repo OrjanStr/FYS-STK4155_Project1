@@ -310,6 +310,13 @@ class Regression():
         X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:])
         f = (self.f - np.mean(self.f))/np.std(self.f)
 
+        indices = np.arange(X.shape[0])
+        np.random.shuffle(indices)
+        # Shuffle data
+        X = X[indices] # Shuffle only rows of design matrix
+        f = f[indices]
+
+
         #splitting data
 
         #removing some values if the array cannot be devided into k equal parts

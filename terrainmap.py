@@ -69,12 +69,11 @@ print(z)
 
 # Looking at MSE and R2 for terraindata
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-maxdeg = 40
-task_b(maxdeg, x, y, z, data = True)
-#task_c(maxdeg, x, y, z, data = True)
+#task_b(30, x, y, z, data = True)
+#task_c(10, x, y, z, data = True)
 lam_lst = np.logspace(-15,3,20)
 maxdeg = 10
-#task_d(maxdeg, lam_lst, x, y, z, data = True)
+task_d(maxdeg, lam_lst, x, y, z, data = True)
 #task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
 
 """

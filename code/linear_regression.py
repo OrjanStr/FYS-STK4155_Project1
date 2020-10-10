@@ -399,10 +399,10 @@ class Regression():
         plt.tick_params(labelsize='12')
         if save and self.terrain:
             print("Terrainsave!")
-            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
+            plt.savefig('../visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and not self.terrain:
             print("Frankesave!")
-            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
+            plt.savefig('../visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
 
     def single_plot(self, x,y, label_x, label_y, func_label, title, save = False, filename = None):
@@ -437,9 +437,9 @@ class Regression():
         plt.tick_params(labelsize='12')
         plt.legend(fontsize='12')
         if save and self.terrain:
-            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
+            plt.savefig('../visuals/Terrain_data/terrain_' + filename + '.pdf')
         elif save and self.terrain == False:
-            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
+            plt.savefig('../visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
 
 
@@ -480,5 +480,5 @@ def coef_plot(deg, n, lam_lst):
     fig.text(0.04, 0.5, r'$\beta$', ha='center',fontsize='16')
 
     plt.xlabel(r'$\lambda$',fontsize='16')
-    plt.savefig('visuals/coefplot_ridge_lasso.pdf')
+    plt.savefig('../visuals/coefplot_ridge_lasso.pdf')
     plt.show()

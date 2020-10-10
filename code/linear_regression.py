@@ -103,7 +103,7 @@ class Regression():
 
         self.n = len(x)
         self.x ,self.y, self.f = x,y,z
-        
+
 
     def design_matrix(self, deg):
         """
@@ -171,7 +171,7 @@ class Regression():
         Args:
             X_train (matrix): Training data for design matrix.
             X_test (matrix): Testing data for design matrix.
-            f_train (array): 
+            f_train (array):
             lam (float >=0, optional): set to zero in OLS. Defaults to 0.
 
         Raises:
@@ -247,8 +247,8 @@ class Regression():
 
     def ridge(self, X_train, X_test, f_train, lam):
         """
-        make model using ridge 
-        
+        make model using ridge
+
         Args:
             X_train (matrix): training data for X
             X_test (matrix): Testing data for X
@@ -471,11 +471,12 @@ def coef_plot(deg, n, lam_lst):
         reg.lasso(reg.X_train, reg.X_test, reg.f_train, lamb)
         lasso_coefs.append(reg.beta_for_plot_lasso)
 
+    lam_lst = np.log10(lam_lst)
     fig, axs = plt.subplots(2, sharey=True)
     fig.suptitle(r'$\beta$ for increasing $\lambda$ values',fontsize='16')
-    axs[0].plot(lam_lst[:18], ridge_coefs[:18])
+    axs[0].plot(lam_lst, ridge_coefs)
     axs[0].set_title('Ridge', fontsize='14')
-    axs[1].plot(lam_lst[:10], lasso_coefs[:10])
+    axs[1].plot(lam_lst, lasso_coefs)
     axs[1].set_title('Lasso', fontsize='14')
     fig.text(0.04, 0.5, r'$\beta$', ha='center',fontsize='16')
 

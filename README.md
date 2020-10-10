@@ -1,9 +1,13 @@
 # FYS-STK4155_Project1 Linear regression models
 
 ## General info
-repository for the first project in FYS-STK 3155
+Repository for the first project in FYS-STK 3155
 the main code is located in code/Linear_regression.py
 note that the plots in visuals may differ from those in report 
+
+## Abstract 
+We consider three types of linear regression,  ordinary least squares method (OLS), Ridge regression and Lasso regression and look at generated data with Franke's function and a terrain data set. With python, using our own implementations as well as functionality from sci-kit Learn, we minimised the cost function for these three methods. The Franke dataset consists of $n=400$ datapoints. Terrain originally had $n=6485401$ but it was reduced to $n=6486$ datapoints. The best method for franke data was Lasso as it yielded the lowest MSE. For terrain data the best method turned out to be OLS since for terrain data overfitting is not an issue, due to the large amount of data points in terrain data. We were unable to plot and analyse the methods for high complexities because of computation time. The methods we examined work well with a limited dataset, but other methods might work better on terrain data.
+
 ## How to Run Code
 * install pipenv on your system 
 * clone the repository

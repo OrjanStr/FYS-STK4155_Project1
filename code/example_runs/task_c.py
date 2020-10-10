@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+sys.path.insert(0,"..")
 from linear_regression import Regression
 from sklearn.model_selection import KFold
 """

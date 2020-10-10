@@ -5,6 +5,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors
+import sys
+sys.path.insert(0,"..")
+
 from linear_regression import Regression
 import matplotlib.cbook as cbook
 import matplotlib.colors as colors

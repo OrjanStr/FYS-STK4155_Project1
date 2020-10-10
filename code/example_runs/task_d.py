@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from linear_regression import Regression
 import seaborn as sns
+import sys
+sys.path.insert(0,"..")
 from linear_regression import coef_plot
 
 """

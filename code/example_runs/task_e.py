@@ -1,5 +1,7 @@
 from random import seed
 import numpy as np
+import sys
+sys.path.insert(0,"..")
 from linear_regression import Regression
 
 """

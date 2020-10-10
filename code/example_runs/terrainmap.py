@@ -19,7 +19,7 @@ from task_d import task_d
 from task_e import task_e
 
 # Loading terrain array
-terrain1 = imread('SRTM_data_Norway_2.tif')
+terrain1 = imread('../SRTM_data_Norway_2.tif')
 terrain2 = np.asarray(terrain1)
 
 print(terrain1.shape)
@@ -75,11 +75,9 @@ y = y.ravel()[::spacing]
 
 # to run one of the files for terrain data just un-comment it and run this file
 # Looking at MSE and R2 for terraindata
+maxdeg=10; lam_lst = np.logspace(-15,0,20)
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-maxdeg = 60
 #task_b(maxdeg, x, y, z, data = True)
 #task_c(maxdeg, x, y, z, data = True)
-lam_lst = np.logspace(-15,0,20)
-maxdeg = 10
-task_d(maxdeg, lam_lst, x, y, z, data = True)
-# task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
+#task_d(maxdeg, lam_lst, x, y, z, data = True)
+task_e(maxdeg, lam_lst, 20, x, y, z, data = True)

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
-from linear_regression import Regression
-import seaborn as sns
 import sys
 sys.path.insert(0,"..")
+from linear_regression import Regression
+import seaborn as sns
 from linear_regression import coef_plot
 
 """
@@ -67,7 +67,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     reg.heatmap(deg_lam_error_bootstrap, boot_title, ticks_x = plot_label_x, ticks_y = plot_label_y,
     save = True , filename = 'boot_heatmap_ridge')
     reg.heatmap(deg_lam_error_kfold, kfold_title, ticks_x = plot_label_x, ticks_y = plot_label_y,
-    save = True , filename = 'kfold_heatmap_ridge') 
+    save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
     reg.single_plot([np.log10(lam_lst), np.log10(lam_lst)], [bias, variance], r'log10($\lambda$)', 'Error',

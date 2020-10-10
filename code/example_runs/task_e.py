@@ -34,7 +34,7 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
             reg.split(reg.X, reg.f, scale=False)
 
             # Bootstrap for MSE, Bias and Variance
-            f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.lasso, lam_value)
+            f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.lasso, lam_value)
             f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
             strap_error[i,k] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )

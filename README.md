@@ -1,8 +1,9 @@
 # FYS-STK4155_Project1 Linear regression models
 
 ## General info
-the main code is located in Linear_regression.py
-
+repository for the first project in FYS-STK 3155
+the main code is located in code/Linear_regression.py
+note that the plots in visuals may differ from those in report 
 ## How to Run Code
 * install pipenv on your system 
 * clone the repository
@@ -18,8 +19,10 @@ pipenv shell
 
 
 ## Table of contents
-* [Visuals](visuals)
-
+* [Visuals](code/visuals)
+* [code](code)
+* [Example run](code/example_run)
+* [Report](report)
 
 
 ## example use 

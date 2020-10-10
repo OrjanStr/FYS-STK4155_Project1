@@ -51,13 +51,13 @@ x, y = np.meshgrid(x,y)
 # plt.show()
 
 # Converting Terraindata for calculations
-spacing = 1000
+spacing = 10000
 # Raveling nata to get into shape (x_dim*y_dim,)
 z = terrain1.ravel()[::spacing]
 z = z.astype("float64") # Converting to float
 x = x.ravel()[::spacing]
 y = y.ravel()[::spacing]
-print(z)
+
 
 #black and white plot for terrain data
 # plt.figure()
@@ -69,13 +69,13 @@ print(z)
 
 # Looking at MSE and R2 for terraindata
 #task_a(x, y, z, generate = False) # Generate=False means we don't generate a new dataset
-maxdeg = 40
-# task_b(maxdeg, x, y, z, data = True)
+maxdeg = 60
+#task_b(maxdeg, x, y, z, data = True)
 #task_c(maxdeg, x, y, z, data = True)
-lam_lst = np.logspace(-15,3,20)
-maxdeg = 20
-#task_d(maxdeg, lam_lst, x, y, z, data = True)
-task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
+lam_lst = np.logspace(-15,0,20)
+maxdeg = 10
+task_d(maxdeg, lam_lst, x, y, z, data = True)
+# task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
 
 """
 maxdeg = 20

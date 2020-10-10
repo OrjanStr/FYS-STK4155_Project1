@@ -58,6 +58,7 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
     plt.title("Beta Variance OLS | Complexity  = 5", fontsize = '16')
     plt.xlabel("Features",fontsize = '16')
     plt.ylabel(r"$\beta$",fontsize = '16')
+    plt.savefig("visuals/beta_variance.pdf")
     plt.show()
 
     # Plotting MSE and R2 score as function of complexity
@@ -68,6 +69,7 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
     plt.xlabel("Complexity", fontsize = '16')
     plt.ylabel("Score", fontsize = '16')
     plt.legend(fontsize='12', loc=7)
+    plt.savefig("visuals/R2_MSE.pdf")
     plt.show()
 
 if __name__ == "__main__":

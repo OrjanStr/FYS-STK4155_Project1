@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from linear_regression import Regression
 from sklearn.model_selection import KFold
-
+"""
+compare bootstrap with kfold for OLS
+"""
 
 def task_c(maxdeg, x=None, y=None, z=None, data=False):
     n = 400;
@@ -30,7 +32,7 @@ def task_c(maxdeg, x=None, y=None, z=None, data=False):
         reg.split(reg.X, reg.f)
 
         # Bootstrap
-        f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.OLS, lam_value)
+        f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials, reg.OLS, lam_value)
         MSE_test_bootstrap[i] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
 
         # Cross-Validation

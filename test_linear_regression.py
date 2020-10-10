@@ -5,7 +5,7 @@ from linear_regression import Regression
 
 import unittest
 
-class TestFrankfunk(unittest.TestCase):
+class TestLinearRegression(unittest.TestCase):
 
         
     
@@ -26,8 +26,10 @@ class TestFrankfunk(unittest.TestCase):
         expected[3] = [  1,   4,  16,  64,   4,  16,  64,  16,  64,  64]
         expected[4] = [  1,   5,  25, 125,   5,  25, 125,  25, 125, 125]
 
+        #test dimensions of design martix
         self.assertEqual(actual.shape, expected.shape)
-
+        
+        # test values of design matrix
         np.testing.assert_array_equal(actual, expected)
        
         
@@ -40,7 +42,8 @@ class TestFrankfunk(unittest.TestCase):
         reg.OLS(reg.X_train, reg.X_test, reg.f_train)
         actual = reg.beta_OLS
         expected = (28,)
-    
+        
+        #test dimension of beta
         np.testing.assert_array_equal(actual.shape, expected)
         
         
@@ -61,6 +64,7 @@ class TestFrankfunk(unittest.TestCase):
             f_tilde, f_pred = reg.OLS(reg.X_train, reg.X_test, reg.f_train)
             mse_lst[i] = np.mean((f_pred - reg.f_test)**2)
 
+        # test that OLS returns correct degree as best fit
         index = np.argmin(mse_lst)
         self.assertEqual(index, 2) # index 2 = 3rd degree 
         
@@ -80,7 +84,8 @@ class TestFrankfunk(unittest.TestCase):
             reg.split(X, reg.f)
             f_tilde, f_pred = reg.ridge(reg.X_train, reg.X_test, reg.f_train, lam=0)
             mse_lst[i] = np.mean((f_pred - reg.f_test)**2)
-
+            
+        # test that Ridge returns correct degree as best fit
         index = np.argmin(mse_lst)
         self.assertEqual(index, 2) # index 2 = 3rd degree 
 

@@ -10,6 +10,8 @@ from sklearn.exceptions import ConvergenceWarning
 
 class Regression():
     """
+    class to handle Linear regression with a dataset.
+    can also generate from franke's function.
     """
 
     def __init__(self):
@@ -88,9 +90,9 @@ class Regression():
         create class variables from x,y and z, so they can be used in the class
 
         Args:
-            x (array): DESCRIPTION.
-            y (array): DESCRIPTION.
-            z (array): DESCRIPTION.
+            x (array): x coordinate of dataset.
+            y (array): y coordinate of dataset.
+            z (array): data points
 
         Returns:
             None.
@@ -101,6 +103,7 @@ class Regression():
 
         self.n = len(x)
         self.x ,self.y, self.f = x,y,z
+
 
     def design_matrix(self, deg):
         """
@@ -166,17 +169,17 @@ class Regression():
         Compute model with Ordinary Least Squared
 
         Args:
-            X_train (matrix): DESCRIPTION.
-            X_test (matrix): DESCRIPTION.
-            f_train (array): DESCRIPTION.
+            X_train (matrix): Training data for design matrix.
+            X_test (matrix): Testing data for design matrix.
+            f_train (array):
             lam (float >=0, optional): set to zero in OLS. Defaults to 0.
 
         Raises:
             ValueError: if a lambda value lam>0 is used.
 
         Returns:
-            f_tilde (array): .
-            f_pred (array): .
+            f_tilde (array): prediciton for training data
+            f_pred (array): prediction
 
         """
         if lam>0:
@@ -206,7 +209,7 @@ class Regression():
             lam (float): which lambda value to use if ridge/lasso. if OLS set lam =0
 
         Returns:
-            z_pred (TYPE): DESCRIPTION.
+            z_pred (matrix):  matrix of predictions for all bootstraps
 
         """
         mse = np.zeros(trials)
@@ -220,16 +223,16 @@ class Regression():
 
     def beta_confidence(self, beta, o2, X_train,n):
         """
-
+        calculate beta confidence interval
 
         Args:
-            beta (TYPE): DESCRIPTION.
-            o2 (TYPE): DESCRIPTION.
-            X_train (TYPE): DESCRIPTION.
-            n (TYPE): DESCRIPTION.
+            beta (array): beta values
+            o2 (matrix): variance of error
+            X_train (matrix): DESCRIPTION.
+            n (int): DESCRIPTION.
 
         Returns:
-            var_beta (TYPE): DESCRIPTION.
+            var_beta (array): beta variance values.
 
         """
         # Calculating variance
@@ -244,17 +247,17 @@ class Regression():
 
     def ridge(self, X_train, X_test, f_train, lam):
         """
-
+        make model using ridge
 
         Args:
-            X_train (TYPE): DESCRIPTION.
-            X_test (TYPE): DESCRIPTION.
-            f_train (TYPE): DESCRIPTION.
-            lam (TYPE): DESCRIPTION.
+            X_train (matrix): training data for X
+            X_test (matrix): Testing data for X
+            f_train (array): Training data for f
+            lam (float): lambda value for lasso. Decides the penalty.
 
         Returns:
-            f_tilde (TYPE): DESCRIPTION.
-            f_pred (TYPE): DESCRIPTION.
+            f_tilde (array): prediction for training data
+            f_pred (array): prediction
 
         """
         beta = np.linalg.pinv(X_train.T @ X_train + np.identity(len(X_train[0,:]))*lam) @ X_train.T @ f_train
@@ -268,17 +271,17 @@ class Regression():
     @ignore_warnings(category=ConvergenceWarning)
     def lasso(self,X_train, X_test, f_train, lam):
         """
-
+        make model using lasso from sklearn
 
         Args:
-            X_train (TYPE): DESCRIPTION.
-            X_test (TYPE): DESCRIPTION.
-            f_train (TYPE): DESCRIPTION.
-            lam (TYPE): DESCRIPTION.
+            X_train (matrix): training data for X
+            X_test (matrix): Testing data for X
+            f_train (array): Training data for f
+            lam (float): lambda value for lasso. Decides the penalty.
 
         Returns:
-            f_tilde (TYPE): DESCRIPTION.
-            f_pred (TYPE): DESCRIPTION.
+            f_tilde (array): prediction for training data
+            f_pred (array): prediction
 
         """
 
@@ -294,7 +297,7 @@ class Regression():
 
     def k_fold(self,X,k, method, lam = None):
         """
-
+        Evaluate mode using K-Fold cross validation
 
         Args:
             X (matrix): Design matrix.
@@ -304,20 +307,13 @@ class Regression():
                     lasso. Defaults to None.
 
         Returns:
-            TYPE: DESCRIPTION.
+            float: Test Error.
 
         """
 
         #scaling data
         X[:,1:] = (X[:,1:] - np.mean(X[:,1:], axis=0))/np.std(X[:,1:])
         f = (self.f - np.mean(self.f))/np.std(self.f)
-
-        indices = np.arange(X.shape[0])
-        np.random.shuffle(indices)
-        # Shuffle data
-        X = X[indices] # Shuffle only rows of design matrix
-        f = f[indices]
-
 
         #splitting data
 
@@ -411,17 +407,20 @@ class Regression():
 
     def single_plot(self, x,y, label_x, label_y, func_label, title, save = False, filename = None):
         """
-
+        viusualise data in a plot
 
         Args:
-            x (array): DESCRIPTION.
-            y (array): DESCRIPTION.
-            label_x (string): DESCRIPTION.
-            label_y (string): DESCRIPTION.
-            func_label (list of strings): DESCRIPTION.
-            title (string): DESCRIPTION.
-            save (boolean, optional): DESCRIPTION. Defaults to False.
-            filename (string, optional): DESCRIPTION. Defaults to None.
+            x (list of arrays): First element of list is the array used to plot
+                        the x-values of function 1, the second element function 2 etc.
+            y (list of arrays): Same as x but with y-values.
+            label_x (string): Label for x axis.
+            label_y (string): Label for y axis.
+            func_label (list of strings): Labels to go in the legend.
+            title (string): Title
+            save (boolean, optional): if true, saves the plot to folder as pdf.
+                            Defaults to False.
+            filename (string, optional): filename without file extension
+                                        . Defaults to None.
 
         Returns:
             None.
@@ -442,56 +441,6 @@ class Regression():
         elif save and self.terrain == False:
             plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
         plt.show()
-
-
-    def compare_plot(self, x, y, label_x, label_y,
-                     graph_label, title, subtitle, save = False, filename = None):
-        """
-
-
-        Args:
-            x (list): list where the first element is the x values for the
-                        first plot and the second element is the x values for
-                        the second plot.
-            y (list): same as x, but for y values.
-            label_x (string): x_label to use for plot.
-            label_y (string): y_label to use for plot.
-            graph_label (list of strings): first element of list is the label
-                        to use for the first plot, second element is the label
-                        to use for the second plot.
-            title (string): title of plot.
-            subtitle (list of strings): list of individual titles for the two plots
-            save (boolean, optional): if True, saves the plot to correct folder
-                        . Defaults to False.
-            filename ('string', optional): filename without file extension
-                        saves plot as pdf. Defaults to None.
-
-        Returns:
-            None.
-
-        """
-
-        fig, axs = plt.subplots(2)
-        fig.suptitle(title)
-
-        axs[0].plot(x[0], y[0], label = graph_label[0])
-        axs[0].title.set_text(subtitle[0])
-        axs[0].set_xlabel(label_x[0])
-        axs[0].set_ylabel(label_y[0])
-
-
-        axs[1].plot(x[1], y[1], label = graph_label[1])
-        axs[1].title.set_text(subtitle[1])
-        axs[1].set_xlabel(label_x[1])
-        axs[1].set_ylabel(label_y[1])
-
-        if save and self.terrain:
-            plt.savefig('visuals/Terrain_data/terrain_' + filename + '.pdf')
-        elif save and not self.terrain:
-            plt.savefig('visuals/Frankes_function/' + filename + '.pdf')
-        plt.legend()
-        plt.show()
-
 
 
 def coef_plot(deg, n, lam_lst):

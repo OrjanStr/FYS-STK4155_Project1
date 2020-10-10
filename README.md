@@ -21,7 +21,7 @@ pipenv shell
 ## Table of contents
 * [Visuals](code/visuals)
 * [code](code)
-* [Example run](code/example_run)
+* [Example runs](code/example_runs)
 * [Report](report)
 
 

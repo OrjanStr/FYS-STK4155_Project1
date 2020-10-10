@@ -40,7 +40,7 @@ def task_b(maxdeg, x = None , y = None , z = None, data = False):
         train_error[i] = np.mean( (f_tilde - reg.f_train)**2 )
 
         # Bootstrap Method
-        f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train,
+        f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train,
                                      trials = 100, method = reg.OLS ,lam = 0)
         f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 

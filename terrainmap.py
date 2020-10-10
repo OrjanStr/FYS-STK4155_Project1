@@ -57,7 +57,7 @@ z = terrain1.ravel()[::spacing]
 z = z.astype("float64") # Converting to float
 x = x.ravel()[::spacing]
 y = y.ravel()[::spacing]
-print(z)
+print(z.shape)
 
 #black and white plot for terrain data
 # plt.figure()
@@ -72,10 +72,10 @@ print(z)
 maxdeg = 40
 # task_b(maxdeg, x, y, z, data = True)
 #task_c(maxdeg, x, y, z, data = True)
-lam_lst = np.logspace(-15,3,20)
-maxdeg = 20
+lam_lst = np.logspace(-15,0,20)
+maxdeg = 10
 #task_d(maxdeg, lam_lst, x, y, z, data = True)
-task_e(maxdeg, lam_lst, 20, x, y, z, data = True)
+#task_e(maxdeg, lam_lst, 2, x, y, z, data = True)
 
 """
 maxdeg = 20

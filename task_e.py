@@ -37,7 +37,7 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
             variance[i,k] = np.mean(np.var(f_strap, axis=1))
 
             # Cross validation for MSE
-            CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, 0)#lam_value)
+            CV_error[i,k] = reg.k_fold(reg.X, 5, reg.lasso, lam_value)
 
 
     reg.heatmap(CV_error, 'Lasso MSE - Cross-Validation', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'LassoMSE_CV')
@@ -46,5 +46,5 @@ def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
     reg.heatmap(variance, 'Lasso Variance', ticks_x=plot_label_x, ticks_y=plot_label_y, save = True, filename = 'Lasso_variance')
 
 if __name__ == "__main__":
-    lam_lst = np.logspace(-15,0,20)
-    task_e(10,lam_lst,100)
+    lam_lst = np.logspace(-15,-2,20)
+    task_e(15,lam_lst,100)

@@ -207,7 +207,6 @@ class Regression():
 
         Returns:
             z_pred (TYPE): DESCRIPTION.
-            mse (TYPE): DESCRIPTION.
 
         """
         mse = np.zeros(trials)
@@ -217,7 +216,7 @@ class Regression():
             X_new, f_new = resample(X_train, f_train)
             z_pred[:,i] = method(X_new, X_test, f_new, lam)[1]
             mse[i] = self.MSE( self.f_test, z_pred[:,i] )
-        return z_pred, mse
+        return z_pred
 
     def beta_confidence(self, beta, o2, X_train,n):
         """
@@ -523,11 +522,12 @@ def coef_plot(deg, n, lam_lst):
         reg.lasso(reg.X_train, reg.X_test, reg.f_train, lamb)
         lasso_coefs.append(reg.beta_for_plot_lasso)
 
+    lam_lst = np.log10(lam_lst)
     fig, axs = plt.subplots(2, sharey=True)
     fig.suptitle(r'$\beta$ for increasing $\lambda$ values',fontsize='16')
-    axs[0].plot(lam_lst[:18], ridge_coefs[:18])
+    axs[0].plot(lam_lst, ridge_coefs)
     axs[0].set_title('Ridge', fontsize='14')
-    axs[1].plot(lam_lst[:10], lasso_coefs[:10])
+    axs[1].plot(lam_lst, lasso_coefs)
     axs[1].set_title('Lasso', fontsize='14')
     fig.text(0.04, 0.5, r'$\beta$', ha='center',fontsize='16')
 

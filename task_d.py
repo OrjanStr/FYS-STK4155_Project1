@@ -68,7 +68,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     save = True , filename = 'kfold_heatmap_ridge')
 
     # Plotting bias and variance for lambda
-    reg.single_plot([np.log10(lam_lst), np.log10(lam_lst)], [bias, variance], r'$\lambda$', 'Error',
+    reg.single_plot([np.log10(lam_lst), np.log10(lam_lst)], [bias, variance], r'$log10(\lambda)$', 'Error',
                  ['Bias','Variance'], 'lambda_bias_variance (deg: %d)' %(deg), save = True, filename = 'lambda_bias_variance_deg%d' %(deg))
 
 if __name__ == "__main__":
@@ -76,5 +76,5 @@ if __name__ == "__main__":
     maxdeg = 12
     task_d(maxdeg, lam_lst)
 
-    lam_lst = np.logspace(-4,-1.5,20)
-    coef_plot(3,400,lam_lst)
+    lam_lst = np.logspace(-15,0,20)
+    coef_plot(10,400,lam_lst)

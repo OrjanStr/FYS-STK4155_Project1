@@ -10,6 +10,8 @@ from sklearn.exceptions import ConvergenceWarning
 
 class Regression():
     """
+    class to handle Linear regression with a dataset.
+    can also generate from franke's function.
     """
 
     def __init__(self):
@@ -88,9 +90,9 @@ class Regression():
         create class variables from x,y and z, so they can be used in the class
 
         Args:
-            x (array): DESCRIPTION.
-            y (array): DESCRIPTION.
-            z (array): DESCRIPTION.
+            x (array): x coordinate of dataset.
+            y (array): y coordinate of dataset.
+            z (array): data points
 
         Returns:
             None.
@@ -167,9 +169,9 @@ class Regression():
         Compute model with Ordinary Least Squared
 
         Args:
-            X_train (matrix): DESCRIPTION.
-            X_test (matrix): DESCRIPTION.
-            f_train (array): DESCRIPTION.
+            X_train (matrix): Training data for design matrix.
+            X_test (matrix): Testing data for design matrix.
+            f_train (array): 
             lam (float >=0, optional): set to zero in OLS. Defaults to 0.
 
         Raises:
@@ -207,8 +209,7 @@ class Regression():
             lam (float): which lambda value to use if ridge/lasso. if OLS set lam =0
 
         Returns:
-            z_pred (TYPE): DESCRIPTION.
-            mse (): DESCRIPTION.
+            z_pred (matrix):  matrix of predictions for all bootstraps
 
         """
         mse = np.zeros(trials)
@@ -218,20 +219,20 @@ class Regression():
             X_new, f_new = resample(X_train, f_train)
             z_pred[:,i] = method(X_new, X_test, f_new, lam)[1]
             mse[i] = self.MSE( self.f_test, z_pred[:,i] )
-        return z_pred, mse
+        return z_pred
 
     def beta_confidence(self, beta, o2, X_train,n):
         """
         calculate beta confidence interval
 
         Args:
-            beta (TYPE): DESCRIPTION.
-            o2 (TYPE): DESCRIPTION.
-            X_train (TYPE): DESCRIPTION.
-            n (TYPE): DESCRIPTION.
+            beta (array): beta values
+            o2 (matrix): variance of error
+            X_train (matrix): DESCRIPTION.
+            n (int): DESCRIPTION.
 
         Returns:
-            var_beta (TYPE): DESCRIPTION.
+            var_beta (array): beta variance values.
 
         """
         # Calculating variance

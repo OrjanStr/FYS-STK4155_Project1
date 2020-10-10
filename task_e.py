@@ -2,6 +2,9 @@ from random import seed
 import numpy as np
 from linear_regression import Regression
 
+"""
+plot bootsrap error, kfold error bias and variance for Lasso
+"""
 
 def task_e(maxdeg,lam_lst, trials, x = None, y = None, z = None, data = False):
     n=400; maxdeg=maxdeg; trials=trials

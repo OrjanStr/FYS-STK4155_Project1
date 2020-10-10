@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from random import seed
 from linear_regression import Regression
-
+"""
+plot beta variance and MSE/R2
+"""
 def task_a(x_set=None,y_set=None,z_set=None, data=False):
     n = 400; deg = 3
 

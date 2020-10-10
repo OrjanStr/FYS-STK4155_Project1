@@ -41,7 +41,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
             reg.split(reg.X, reg.f) # Values are scaled in this method
 
             # Bootstrap Method for Bias and Variance
-            f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+            f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
             # Assigning the bootstrap MSE to our plot array
             deg_lam_error_bootstrap[i,k] = np.mean( np.mean((reg.f_test.reshape(-1,1) - f_strap)**2, axis=1) )
             # Calculate k-fold MSE and assign for plot array
@@ -51,7 +51,7 @@ def task_d(maxdeg, lam_lst, x = None, y = None, z = None, data = False):
     for k, lam_value in enumerate(lam_lst):
 
         # Bootstrap resampling
-        f_strap, mse = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
+        f_strap = reg.bootstrap(reg.X_train, reg.X_test, reg.f_train, trials = 100, method = reg.ridge ,lam = lam_value)
         f_hat = np.mean(f_strap, axis=1) # Finding the mean for every coloumn element
 
         # Assigning MSE, bias and variance to plot arrays

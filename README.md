@@ -19,7 +19,7 @@ pipenv shell
 
 ## Table of contents
 * [Report](report)
-* [Visuals](code/visuals)
-* [Example Use](code/example_use)
-* [Code](code)
+* [Visuals](visuals)
+* [Example Use](example_use)
+
 

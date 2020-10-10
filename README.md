@@ -20,8 +20,6 @@ pipenv shell
 ## Table of contents
 * [Report](report)
 * [Visuals](visuals)
-* [Example Use]()
-
 
 ## example use 
 To run examples with Franke data, run the individual files. 

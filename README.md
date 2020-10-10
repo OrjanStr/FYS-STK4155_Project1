@@ -1,7 +1,7 @@
 # FYS-STK4155_Project1 Linear regression models
 
 ## General info
-the main code is located in Linear_regression.py.
+the main code is located in Linear_regression.py
 
 ## How to Run Code
 * install pipenv on your system 
@@ -24,7 +24,8 @@ pipenv shell
 
 
 ## example use 
-you can find examples of how the code might be used in:
+To run examples with Franke data, run the individual files. 
+to run examples with terrain data, use terrainmap.py
 #### task_a.py:
 MSE and R2 score, as well as beta variance for OLS
 #### task_b.py:
@@ -36,7 +37,6 @@ compare bootstrap with kfold for OLS
 plotting heatmap for bootstrap and kfold, and bias variance with ridge
 #### task_e.py:
 plot bootsrap error, kfold error bias and variance for Lasso
-
 ## test of code/benchmarks
 to test the function write
 ```

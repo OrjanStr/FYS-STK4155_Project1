@@ -18,8 +18,8 @@ pipenv shell
 
 
 ## Table of contents
-* [Report](#report)
-* [visuals](#Visuals)
-* [Example Use](#example_use)
-* [Code](#code)
+* [Report](report)
+* [Visuals](visuals)
+* [Example Use](example_use)
+* [Code](code)
 

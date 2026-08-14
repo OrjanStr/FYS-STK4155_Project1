@@ -73,7 +73,7 @@ def task_a(x_set=None,y_set=None,z_set=None, data=False):
     plt.xlabel("Complexity", fontsize = '16')
     plt.ylabel("Score", fontsize = '16')
     plt.legend(fontsize='12', loc=7)
-    plt.savefig("../visuals/R2_MSE.pdf")
+    plt.savefig("../visuals/R2_MSE.png")
     plt.show()
 
 if __name__ == "__main__":
